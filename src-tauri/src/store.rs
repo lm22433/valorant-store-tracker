@@ -26,7 +26,6 @@ pub async fn get_store_data(app: tauri::AppHandle) -> Result<StorefrontResponse,
     )
         .await?;
 
-    println!("Storefront found: {:?}", storefront);
     Ok(storefront)
 }
 
