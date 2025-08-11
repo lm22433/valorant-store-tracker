@@ -4,7 +4,7 @@ import { listen } from "@tauri-apps/api/event";
 import "./App.css";
 import LoadingScreen from "./components/common/LoadingScreen";
 import LoginScreen from "./components/auth/LoginScreen";
-import Home from "./components/Home.tsx";
+import Home from "./components/Home";
 
 // App root now only handles auth gating and high-level layout
 function App() {
