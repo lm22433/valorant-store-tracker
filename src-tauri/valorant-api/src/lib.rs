@@ -1,4 +1,11 @@
+pub mod http;
+pub mod errors;
+pub mod client;
 pub mod models;
-mod errors;
-mod client;
+pub mod endpoints;
 
+#[cfg(feature = "reqwest")]
+pub mod reqwest;
+
+#[cfg(feature = "tokio")]
+pub mod tokio;

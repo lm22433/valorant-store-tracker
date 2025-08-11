@@ -64,8 +64,6 @@ pub async fn initiate_auth_flow(app: tauri::AppHandle) {
                                     tag_line: player_info.acct.tag_line.clone(),
                                 };
 
-                                println!("Account Info: {:?}", account_info);
-
                                 // Insert/update account data
                                 accounts.insert(
                                     puuid.clone(),
