@@ -17,3 +17,11 @@ pub fn match_history_url(shard: &str, puuid: &str, start_index: &str, end_index:
 		shard, puuid, start_index, end_index, queue
 	)
 }
+
+#[inline]
+pub fn match_details_url(shard: &str, match_id: &str) -> String {
+	format!(
+		"https://pd.{}.a.pvp.net/match-details/v1/matches/{}",
+		shard, match_id
+	)
+}

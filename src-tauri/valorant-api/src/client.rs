@@ -1,7 +1,7 @@
-use crate::endpoints::{match_history_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
+use crate::endpoints::{match_history_url, match_details_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
 use crate::errors::ValorantApiError;
 use crate::http::HttpClient;
-use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse};
+use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse, MatchDetailsResponse};
 
 pub struct ValorantApiClient<C: HttpClient> {
     http_client: C,
@@ -37,13 +37,13 @@ impl<C: HttpClient> ValorantApiClient<C> {
         client_platform: &str,
         client_version: &str,
         entitlement_token: &str,
-        access_token: &str,
+        auth_token: &str,
     ) -> Result<MatchHistoryResponse, ValorantApiError> {
         let url = match_history_url(shard, puuid, start_index, end_index, queue);
 
         let resp = self.http_client
             .get(&url)
-            .bearer_auth(access_token)
+            .bearer_auth(auth_token)
             .header("X-Riot-ClientPlatform", client_platform)
             .header("X-Riot-ClientVersion", client_version)
             .header("X-Riot-Entitlements-JWT", entitlement_token)
@@ -55,8 +55,29 @@ impl<C: HttpClient> ValorantApiClient<C> {
         Ok(body)
     }
 
-    pub async fn get_match_details(&self) {
-        unimplemented!()
+    pub async fn get_match_details(
+        &self,
+        shard: &str,
+        match_id: &str,
+        client_platform: &str,
+        client_version: &str,
+        entitlement_token: &str,
+        auth_token: &str,
+    ) -> Result<MatchDetailsResponse, ValorantApiError> {
+        let url = match_details_url(shard, match_id);
+
+        let resp = self.http_client
+            .get(&url)
+            .bearer_auth(auth_token)
+            .header("X-Riot-ClientPlatform", client_platform)
+            .header("X-Riot-ClientVersion", client_version)
+            .header("X-Riot-Entitlements-JWT", entitlement_token)
+            .json(&serde_json::json!({}))
+            .send()
+            .await?;
+
+        let body = resp.json::<MatchDetailsResponse>()?;
+        Ok(body)
     }
 
     pub async fn get_competitive_updates(&self) {

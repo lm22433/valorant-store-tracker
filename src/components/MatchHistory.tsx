@@ -1,12 +1,11 @@
 import React, {useCallback} from 'react';
-import Matches from './history/Matches';
+import Match from './history/Match';
 import useHistoryData from '../hooks/useHistoryData';
 import LoadingScreen from './common/LoadingScreen';
-import Header from './store/Header';
 
-const History: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) => {
+const History: React.FC = () => {
 
-    const { user, history, isLoading, error, refetch } = useHistoryData();
+    const { user, matches, isLoading, error, refetch } = useHistoryData();
 
     const handleRefresh = useCallback(() => {
         refetch();
@@ -28,10 +27,10 @@ const History: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void})
 
     return (
         <div className="home">
-            <Header user={user} onRefresh={handleRefresh} onHome={onHome} />
             <main className="main-content">
                 <h1>Match History</h1>
-                <Matches ids={history!.History}/>
+                {matches.length}
+                {matches.map((match) => <Match key={match.matchInfo.matchId} match={match}/>)}
             </main>
         </div>
     );

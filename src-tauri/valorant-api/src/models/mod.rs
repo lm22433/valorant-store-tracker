@@ -393,301 +393,405 @@ pub struct MatchID {
     pub queue_id: String,
 }
 
-/*
+// CHATGPT CODE
+
+use serde_json::Value;
+
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct MatchDetailsResponse {
-    pub match_info: {
-        /** Match ID */
-        matchId: string;
-        /** Map ID */
-        mapId: string;
-        gamePodId: string;
-        gameLoopZone: string;
-        gameServerAddress: string;
-        gameVersion: string;
-        gameLengthMillis: number | null;
-        gameStartMillis: number;
-        provisioningFlowID: "Matchmaking" | "CustomGame";
-        isCompleted: boolean;
-        customGameName: string;
-        forcePostProcessing: boolean;
-        /** Queue ID */
-        queueID: string;
-        /** Game Mode */
-        gameMode: string;
-        isRanked: boolean;
-        isMatchSampled: boolean;
-        /** Season ID */
-        seasonId: string;
-        completionState: "Surrendered" | "Completed" | "VoteDraw" | "";
-        platformType: "PC";
-        premierMatchInfo: {};
-        partyRRPenalties?: {
-            [x: string]: number;
-        } | undefined;
-        shouldMatchDisablePenalties: boolean;
-    };
-    players: {
-        /** Player UUID */
-        subject: string;
-        gameName: string;
-        tagLine: string;
-        platformInfo: {
-            platformType: "PC";
-            platformOS: "Windows";
-            platformOSVersion: string;
-            platformChipset: "Unknown";
-        };
-        teamId: ("Blue" | "Red") | string;
-        /** Party ID */
-        partyId: string;
-        /** Character ID */
-        characterId: string;
-        stats: {
-            score: number;
-            roundsPlayed: number;
-            kills: number;
-            deaths: number;
-            assists: number;
-            playtimeMillis: number;
-            abilityCasts?: ({
-                grenadeCasts: number;
-                ability1Casts: number;
-                ability2Casts: number;
-                ultimateCasts: number;
-            } | null) | undefined;
-        } | null;
-        roundDamage: {
-            round: number;
-            /** Player UUID */
-            receiver: string;
-            damage: number;
-        }[] | null;
-        competitiveTier: number;
-        isObserver: boolean;
-        /** Card ID */
-        playerCard: string;
-        /** Title ID */
-        playerTitle: string;
-        /** Preferred Level Border ID */
-        preferredLevelBorder?: (string | "") | undefined;
-        accountLevel: number;
-        sessionPlaytimeMinutes?: (number | null) | undefined;
-        xpModifications?: {
-            /** XP multiplier */
-            Value: number;
-            /** XP Modification ID */
-            ID: string;
-        }[] | undefined;
-        behaviorFactors?: {
-            afkRounds: number;
-            /** Float value of unknown significance. Possibly used to quantify how much the player was in the way of their teammates? */
-            collisions?: number | undefined;
-            commsRatingRecovery: number;
-            damageParticipationOutgoing: number;
-            friendlyFireIncoming?: number | undefined;
-            friendlyFireOutgoing?: number | undefined;
-            mouseMovement?: number | undefined;
-            stayedInSpawnRounds?: number | undefined;
-        } | undefined;
-        newPlayerExperienceDetails?: {
-            basicMovement: {
-                idleTimeMillis: 0;
-                objectiveCompleteTimeMillis: 0;
-            };
-            basicGunSkill: {
-                idleTimeMillis: 0;
-                objectiveCompleteTimeMillis: 0;
-            };
-            adaptiveBots: {
-                adaptiveBotAverageDurationMillisAllAttempts: 0;
-                adaptiveBotAverageDurationMillisFirstAttempt: 0;
-                killDetailsFirstAttempt: null;
-                idleTimeMillis: 0;
-                objectiveCompleteTimeMillis: 0;
-            };
-            ability: {
-                idleTimeMillis: 0;
-                objectiveCompleteTimeMillis: 0;
-            };
-            bombPlant: {
-                idleTimeMillis: 0;
-                objectiveCompleteTimeMillis: 0;
-            };
-            defendBombSite: {
-                success: false;
-                idleTimeMillis: 0;
-                objectiveCompleteTimeMillis: 0;
-            };
-            settingStatus: {
-                isMouseSensitivityDefault: boolean;
-                isCrosshairDefault: boolean;
-            };
-            versionString: "";
-        } | undefined;
-    }[];
-    bots: unknown[];
-    coaches: {
-        /** Player UUID */
-        subject: string;
-        teamId: "Blue" | "Red";
-    }[];
-    teams: {
-        teamId: ("Blue" | "Red") | string;
-        won: boolean;
-        roundsPlayed: number;
-        roundsWon: number;
-        numPoints: number;
-    }[] | null;
-    roundResults: {
-        roundNum: number;
-        roundResult: "Eliminated" | "Bomb detonated" | "Bomb defused" | "Surrendered" | "Round timer expired";
-        roundCeremony: "CeremonyDefault" | "CeremonyTeamAce" | "CeremonyFlawless" | "CeremonyCloser" | "CeremonyClutch" | "CeremonyThrifty" | "CeremonyAce" | "";
-        winningTeam: ("Blue" | "Red") | string;
-        /** Player UUID */
-        bombPlanter?: string | undefined;
-        bombDefuser?: (("Blue" | "Red") | string) | undefined;
-        /** Time in milliseconds since the start of the round when the bomb was planted. 0 if not planted */
-        plantRoundTime?: number | undefined;
-        plantPlayerLocations: {
-            /** Player UUID */
-            subject: string;
-            viewRadians: number;
-            location: {
-                x: number;
-                y: number;
-            };
-        }[] | null;
-        plantLocation: {
-            x: number;
-            y: number;
-        };
-        plantSite: "A" | "B" | "C" | "";
-        /** Time in milliseconds since the start of the round when the bomb was defused. 0 if not defused */
-        defuseRoundTime?: number | undefined;
-        defusePlayerLocations: {
-            /** Player UUID */
-            subject: string;
-            viewRadians: number;
-            location: {
-                x: number;
-                y: number;
-            };
-        }[] | null;
-        defuseLocation: {
-            x: number;
-            y: number;
-        };
-        playerStats: {
-            /** Player UUID */
-            subject: string;
-            kills: {
-                /** Time in milliseconds since the start of the game */
-                gameTime: number;
-                /** Time in milliseconds since the start of the round */
-                roundTime: number;
-                /** Player UUID */
-                killer: string;
-                /** Player UUID */
-                victim: string;
-                victimLocation: {
-                    x: number;
-                    y: number;
-                };
-                assistants: string[];
-                playerLocations: {
-                    /** Player UUID */
-                    subject: string;
-                    viewRadians: number;
-                    location: {
-                        x: number;
-                        y: number;
-                    };
-                }[];
-                finishingDamage: {
-                    damageType: "Weapon" | "Bomb" | "Ability" | "Fall" | "Melee" | "Invalid" | "";
-                    /** Item ID of the weapon used to kill the player. Empty string if the player was killed by the spike, fall damage, or melee. */
-                    damageItem: (string | ("Ultimate" | "Ability1" | "Ability2" | "GrenadeAbility" | "Primary")) | "";
-                    isSecondaryFireMode: boolean;
-                };
-            }[];
-            damage: {
-                /** Player UUID */
-                receiver: string;
-                damage: number;
-                legshots: number;
-                bodyshots: number;
-                headshots: number;
-            }[];
-            score: number;
-            economy: {
-                loadoutValue: number;
-                /** Item ID */
-                weapon: string | "";
-                /** Armor ID */
-                armor: string | "";
-                remaining: number;
-                spent: number;
-            };
-            ability: {
-                grenadeEffects: null;
-                ability1Effects: null;
-                ability2Effects: null;
-                ultimateEffects: null;
-            };
-            wasAfk: boolean;
-            wasPenalized: boolean;
-            stayedInSpawn: boolean;
-        }[];
-        /** Empty string if the timer expired */
-        roundResultCode: "Elimination" | "Detonate" | "Defuse" | "Surrendered" | "";
-        playerEconomies: {
-            /** Player UUID */
-            subject: string;
-            loadoutValue: number;
-            /** Item ID */
-            weapon: string | "";
-            /** Armor ID */
-            armor: string | "";
-            remaining: number;
-            spent: number;
-        }[] | null;
-        playerScores: {
-            /** Player UUID */
-            subject: string;
-            score: number;
-        }[] | null;
-    }[] | null;
-    kills: {
-        /** Time in milliseconds since the start of the game */
-        gameTime: number;
-        /** Time in milliseconds since the start of the round */
-        roundTime: number;
-        /** Player UUID */
-        killer: string;
-        /** Player UUID */
-        victim: string;
-        victimLocation: {
-            x: number;
-            y: number;
-        };
-        assistants: string[];
-        playerLocations: {
-            /** Player UUID */
-            subject: string;
-            viewRadians: number;
-            location: {
-                x: number;
-                y: number;
-            };
-        }[];
-        finishingDamage: {
-            damageType: "Weapon" | "Bomb" | "Ability" | "Fall" | "Melee" | "Invalid" | "";
-            /** Item ID of the weapon used to kill the player. Empty string if the player was killed by the spike, fall damage, or melee. */
-            damageItem: (string | ("Ultimate" | "Ability1" | "Ability2" | "GrenadeAbility" | "Primary")) | "";
-            isSecondaryFireMode: boolean;
-        };
-        round: number;
-    }[] | null;
+    pub match_info: MatchInfo,
+    pub players: Vec<Player>,
+    pub bots: Vec<Value>,
+    pub coaches: Vec<Coach>,
+    pub teams: Option<Vec<Team>>,
+    pub round_results: Option<Vec<RoundResult>>,
+    pub kills: Option<Vec<Kill>>,
 }
-*/
+
+/* ===== Shared Types ===== */
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Location {
+    pub x: f64,
+    pub y: f64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PlayerLocation {
+    pub subject: String,
+    pub view_radians: f64,
+    pub location: Location,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FinishingDamage {
+    pub damage_type: DamageType,
+    pub damage_item: String,
+    pub is_secondary_fire_mode: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PlayerEconomy {
+    pub loadout_value: i64,
+    pub weapon: String,
+    pub armor: String,
+    pub remaining: i64,
+    pub spent: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AbilityEffects {
+    pub grenade_effects: Option<Value>,
+    pub ability1_effects: Option<Value>,
+    pub ability2_effects: Option<Value>,
+    pub ultimate_effects: Option<Value>,
+}
+
+/* ===== Enums for Fixed Strings ===== */
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub enum TeamId {
+    Blue,
+    Red,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub enum ProvisioningFlowId {
+    Matchmaking,
+    CustomGame,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub enum CompletionState {
+    Surrendered,
+    Completed,
+    VoteDraw,
+    #[serde(rename = "")]
+    Empty,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub enum PlatformType {
+    PC,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub enum RoundResultType {
+    Eliminated,
+    #[serde(rename = "Bomb detonated")]
+    BombDetonated,
+    #[serde(rename = "Bomb defused")]
+    BombDefused,
+    Surrendered,
+    #[serde(rename = "Round timer expired")]
+    RoundTimerExpired,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub enum RoundCeremony {
+    CeremonyDefault,
+    CeremonyTeamAce,
+    CeremonyFlawless,
+    CeremonyCloser,
+    CeremonyClutch,
+    CeremonyThrifty,
+    CeremonyAce,
+    #[serde(rename = "")]
+    Empty,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub enum PlantSite {
+    A,
+    B,
+    C,
+    #[serde(rename = "")]
+    Empty,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub enum DamageType {
+    Weapon,
+    Bomb,
+    Ability,
+    Fall,
+    Melee,
+    Invalid,
+    #[serde(rename = "")]
+    Empty,
+}
+
+/* ===== Match Info ===== */
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MatchInfo {
+    pub match_id: String,
+    pub map_id: String,
+    pub game_pod_id: String,
+    pub game_loop_zone: String,
+    pub game_server_address: String,
+    pub game_version: String,
+    pub game_length_millis: Option<i64>,
+    pub game_start_millis: i64,
+    pub provisioning_flow_id: ProvisioningFlowId,
+    pub is_completed: bool,
+    pub custom_game_name: String,
+    pub force_post_processing: bool,
+    pub queue_id: String,
+    pub game_mode: String,
+    pub is_ranked: bool,
+    pub is_match_sampled: bool,
+    pub season_id: String,
+    pub completion_state: CompletionState,
+    pub platform_type: PlatformType,
+    pub premier_match_info: Value,
+    pub party_rr_penalties: Option<HashMap<String, i64>>,
+    pub should_match_disable_penalties: bool,
+}
+
+/* ===== Players ===== */
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Player {
+    pub subject: String,
+    pub game_name: String,
+    pub tag_line: String,
+    pub platform_info: PlatformInfo,
+    pub team_id: String, // Not strict enum because TypeScript allowed string
+    pub party_id: String,
+    pub character_id: String,
+    pub stats: Option<PlayerStats>,
+    pub round_damage: Option<Vec<RoundDamage>>,
+    pub competitive_tier: i64,
+    pub is_observer: bool,
+    pub player_card: String,
+    pub player_title: String,
+    pub preferred_level_border: Option<String>,
+    pub account_level: i64,
+    pub session_playtime_minutes: Option<i64>,
+    pub xp_modifications: Option<Vec<XpModification>>,
+    pub behavior_factors: Option<BehaviorFactors>,
+    pub new_player_experience_details: Option<NewPlayerExperienceDetails>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PlatformInfo {
+    pub platform_type: PlatformType,
+    pub platform_os: String,
+    pub platform_os_version: String,
+    pub platform_chipset: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PlayerStats {
+    pub score: i64,
+    pub rounds_played: i64,
+    pub kills: i64,
+    pub deaths: i64,
+    pub assists: i64,
+    pub playtime_millis: i64,
+    pub ability_casts: Option<AbilityCasts>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AbilityCasts {
+    pub grenade_casts: i64,
+    pub ability1_casts: i64,
+    pub ability2_casts: i64,
+    pub ultimate_casts: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoundDamage {
+    pub round: i64,
+    pub receiver: String,
+    pub damage: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct XpModification {
+    pub value: i64,
+    pub id: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BehaviorFactors {
+    pub afk_rounds: i64,
+    pub collisions: Option<f64>,
+    pub comms_rating_recovery: i64,
+    pub damage_participation_outgoing: i64,
+    pub friendly_fire_incoming: Option<i64>,
+    pub friendly_fire_outgoing: Option<i64>,
+    pub mouse_movement: Option<i64>,
+    pub stayed_in_spawn_rounds: Option<i64>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NewPlayerExperienceDetails {
+    pub basic_movement: TimeMetrics,
+    pub basic_gun_skill: TimeMetrics,
+    pub adaptive_bots: AdaptiveBots,
+    pub ability: TimeMetrics,
+    pub bomb_plant: TimeMetrics,
+    pub defend_bomb_site: DefendBombSite,
+    pub setting_status: SettingStatus,
+    pub version_string: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimeMetrics {
+    pub idle_time_millis: i64,
+    pub objective_complete_time_millis: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AdaptiveBots {
+    pub adaptive_bot_average_duration_millis_all_attempts: i64,
+    pub adaptive_bot_average_duration_millis_first_attempt: i64,
+    pub kill_details_first_attempt: Option<Value>,
+    pub idle_time_millis: i64,
+    pub objective_complete_time_millis: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DefendBombSite {
+    pub success: bool,
+    pub idle_time_millis: i64,
+    pub objective_complete_time_millis: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SettingStatus {
+    pub is_mouse_sensitivity_default: bool,
+    pub is_crosshair_default: bool,
+}
+
+/* ===== Coaches / Teams ===== */
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Coach {
+    pub subject: String,
+    pub team_id: TeamId,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Team {
+    pub team_id: String,
+    pub won: bool,
+    pub rounds_played: i64,
+    pub rounds_won: i64,
+    pub num_points: i64,
+}
+
+/* ===== Rounds ===== */
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoundResult {
+    pub round_num: i64,
+    pub round_result: RoundResultType,
+    pub round_ceremony: RoundCeremony,
+    pub winning_team: String,
+    pub bomb_planter: Option<String>,
+    pub bomb_defuser: Option<String>,
+    pub plant_round_time: Option<i64>,
+    pub plant_player_locations: Option<Vec<PlayerLocation>>,
+    pub plant_location: Location,
+    pub plant_site: PlantSite,
+    pub defuse_round_time: Option<i64>,
+    pub defuse_player_locations: Option<Vec<PlayerLocation>>,
+    pub defuse_location: Location,
+    pub player_stats: Vec<RoundPlayerStats>,
+    pub round_result_code: String,
+    pub player_economies: Option<Vec<PlayerEconomy>>,
+    pub player_scores: Option<Vec<PlayerScore>>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoundPlayerStats {
+    pub subject: String,
+    pub kills: Vec<KillEvent>,
+    pub damage: Vec<DamageEvent>,
+    pub score: i64,
+    pub economy: PlayerEconomy,
+    pub ability: AbilityEffects,
+    pub was_afk: bool,
+    pub was_penalized: bool,
+    pub stayed_in_spawn: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct KillEvent {
+    pub game_time: i64,
+    pub round_time: i64,
+    pub killer: String,
+    pub victim: String,
+    pub victim_location: Location,
+    pub assistants: Vec<String>,
+    pub player_locations: Vec<PlayerLocation>,
+    pub finishing_damage: FinishingDamage,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DamageEvent {
+    pub receiver: String,
+    pub damage: i64,
+    pub legshots: i64,
+    pub bodyshots: i64,
+    pub headshots: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PlayerScore {
+    pub subject: String,
+    pub score: i64,
+}
+
+/* ===== Kills ===== */
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Kill {
+    pub game_time: i64,
+    pub round_time: i64,
+    pub killer: String,
+    pub victim: String,
+    pub victim_location: Location,
+    pub assistants: Vec<String>,
+    pub player_locations: Vec<PlayerLocation>,
+    pub finishing_damage: FinishingDamage,
+    pub round: i64,
+}

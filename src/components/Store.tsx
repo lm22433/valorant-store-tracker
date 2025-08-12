@@ -2,13 +2,12 @@ import React, { useCallback, useMemo } from 'react';
 import useStoreData from '../hooks/useStoreData';
 import useTimer from '../hooks/useTimer';
 import LoadingScreen from './common/LoadingScreen';
-import Header from './store/Header';
 import StoreCountdown from './store/StoreCountdown';
 import StoreItems from './store/StoreItems';
 import { processStoreData } from '../store/processStoreData';
 
-const Store: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) => {
-  const { user, store, skinData, isLoading, error, refetch } = useStoreData();
+const Store: React.FC = () => {
+  const { store, skinData, isLoading, error, refetch } = useStoreData();
 
   const processedStore = useMemo(() => {
     if (!store || !skinData.length) return null;
@@ -37,7 +36,6 @@ const Store: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) =
 
   return (
     <div className="home">
-      <Header user={user} onRefresh={handleRefresh} onHome={onHome} />
       <main className="main-content">
         <StoreCountdown timeRemaining={timeRemaining} />
         <section className="store-section">

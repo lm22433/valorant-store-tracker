@@ -19,6 +19,34 @@ body {
   flex-direction: column;
 }
 
+.button-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #ff4655 0%, #ff6b35 100%);
+  padding: 0.75rem 1.5rem;
+  margin: 0 0.5rem;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  font-size: 40px;
+  color: white;
+}
+
+.button:hover {
+  background: linear-gradient(135deg, #ff4656a8 0%, #ff6b3578 100%);
+}
+
 /* Login Screen */
 .login-container {
   min-height: 100vh;
