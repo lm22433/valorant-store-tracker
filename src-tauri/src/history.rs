@@ -20,7 +20,7 @@ pub async fn get_history_data(app: tauri::AppHandle) -> Result<MatchHistoryRespo
         &puuid,
         "0",
         "20",
-        "0",
+        "competetive",
         client_platform,
         &client_version,
         &entitlement_token,
@@ -62,6 +62,14 @@ pub async fn get_match_history(
             response.status()
         ));
     }
+
+    /*
+    let response_text = response.text().await.map_err(|e| e.to_string())?;
+
+    print!("{}", response_text);
+
+    let json = serde_json::from_str::<MatchHistoryResponse>(&response_text).map_err(|e| e.to_string())?;
+    */
 
     let json = response.json::<MatchHistoryResponse>()
         .await.map_err(|e| e.to_string())?;

@@ -1,7 +1,7 @@
 import React from 'react';
-import { HistoryData } from '../../types';
+import { MatchID } from '../../types';
 
-const Matches: React.FC<{ids: HistoryData[]}> = ({ids}: {ids: HistoryData[]}) => {
+const Matches: React.FC<{ids: MatchID[]}> = ({ids}: {ids: MatchID[]}) => {
     return (
         <div>
             {ids.map((match) => (<div>{match.MatchID}</div>))}
