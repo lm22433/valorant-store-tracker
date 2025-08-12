@@ -1,7 +1,7 @@
-use crate::endpoints::{ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS, storefront_url};
+use crate::endpoints::{match_history_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
 use crate::errors::ValorantApiError;
 use crate::http::HttpClient;
-use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse};
+use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse};
 
 pub struct ValorantApiClient<C: HttpClient> {
     http_client: C,
@@ -27,8 +27,32 @@ impl<C: HttpClient> ValorantApiClient<C> {
         unimplemented!()
     }
 
-    pub async fn get_match_history(&self) {
-        unimplemented!()
+    pub async fn get_match_history(
+        &self,
+        shard: &str,
+        puuid: &str,
+        start_index: &str,
+        end_index: &str,
+        queue: &str,
+        client_platform: &str,
+        client_version: &str,
+        entitlement_token: &str,
+        access_token: &str,
+    ) -> Result<MatchHistoryResponse, ValorantApiError> {
+        let url = match_history_url(shard, puuid, start_index, end_index, queue);
+
+        let resp = self.http_client
+            .get(&url)
+            .bearer_auth(access_token)
+            .header("X-Riot-ClientPlatform", client_platform)
+            .header("X-Riot-ClientVersion", client_version)
+            .header("X-Riot-Entitlements-JWT", entitlement_token)
+            .json(&serde_json::json!({}))
+            .send()
+            .await?;
+
+        let body = resp.json::<MatchHistoryResponse>()?;
+        Ok(body)
     }
 
     pub async fn get_match_details(&self) {

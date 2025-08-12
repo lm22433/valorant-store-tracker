@@ -112,35 +112,3 @@ pub async fn get_account_info_command(app: tauri::AppHandle) -> Result<PlayerInf
 
     get_player_info(app, account_info.access_token).await
 }
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ClientVersionResponse {
-    pub status: i32,
-    pub data: ClientVersionData,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ClientVersionData {
-    pub manifestId: String,
-    pub branch: String,
-    pub version: String,
-    pub buildVersion: String,
-    pub engineVersion: String,
-    pub riotClientVersion: String,
-    pub riotClientBuild: String,
-    pub buildDate: String, // Use String for datetime or chrono::DateTime if you want parsing
-}
-
-pub async fn get_client_version() -> Result<ClientVersionResponse, String> {
-    let client = reqwest::Client::new();
-    let res = client
-        .get("https://valorant-api.com/v1/version")
-        .send()
-        .await
-        .map_err(|e| e.to_string())?
-        .json::<ClientVersionResponse>()
-        .await
-        .map_err(|e| e.to_string())?;
-
-    Ok(res)
-}
