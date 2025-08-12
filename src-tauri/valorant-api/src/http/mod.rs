@@ -67,6 +67,54 @@ impl<'a, C: HttpClient> RequestBuilder<'a, C> {
         }
     }
 
+    pub fn header(mut self, name: impl Into<String>, value: impl Into<String>) -> Self {
+        self.headers.push((name.into(), value.into()));
+        self
+    }
+
+    pub fn bearer_auth(mut self, token: impl AsRef<str>) -> Self {
+        let value = format!("Bearer {}", token.as_ref());
+        let auth_key = "Authorization";
+        if let Some(pos) = self.headers.iter().position(|(k, _)| k.eq_ignore_ascii_case(auth_key)) {
+            self.headers[pos] = (auth_key.to_string(), value);
+        } else {
+            self.headers.push((auth_key.to_string(), value));
+        }
+        self
+    }
+
+    pub fn content_type(mut self, mime: impl Into<String>) -> Self {
+        let key = "Content-Type".to_string();
+        let value = mime.into();
+        if let Some(pos) = self.headers.iter().position(|(k, _)| k.eq_ignore_ascii_case(&key)) {
+            self.headers[pos] = (key, value);
+        } else {
+            self.headers.push((key, value));
+        }
+        self
+    }
+
+    pub fn json<T: serde::Serialize>(self, value: &T) -> Self {
+        self.try_json(value)
+            .expect("failed to serialize request body as JSON")
+    }
+
+    pub fn try_json<T: serde::Serialize>(mut self, value: &T) -> Result<Self, HttpError> {
+        let body = serde_json::to_vec(value)
+            .map_err(|e| HttpError::JsonSerialize(e.to_string()))?;
+        self.body = Some(body);
+
+        let key = "Content-Type";
+        let ct_val = "application/json".to_string();
+        if let Some(pos) = self.headers.iter().position(|(k, _)| k.eq_ignore_ascii_case(key)) {
+            self.headers[pos] = (key.to_string(), ct_val);
+        } else {
+            self.headers.push((key.to_string(), ct_val));
+        }
+
+        Ok(self)
+    }
+
     pub async fn send(self) -> Result<HttpResponse, HttpError> {
         let req = HttpRequest {
             method: self.method,

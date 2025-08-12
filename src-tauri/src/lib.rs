@@ -1,5 +1,6 @@
 mod auth;
 mod store;
+mod helpers;
 
 use crate::auth::*;
 use crate::store::*;
