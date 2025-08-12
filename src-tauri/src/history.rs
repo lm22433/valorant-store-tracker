@@ -1,8 +1,8 @@
 use crate::auth::{get_account_info, get_active_account, get_entitlements_token, get_client_version};
-use valorant_api::models::StorefrontResponse;
+use valorant_api::models::MatchHistoryResponse;
 
 #[tauri::command]
-pub async fn get_store_data(app: tauri::AppHandle) -> Result<StorefrontResponse, String> {
+pub async fn get_history_data(app: tauri::AppHandle) -> Result<MatchHistoryResponse, String> {
     let puuid = get_active_account(&app).map_err(|e| e.to_string())?;
     let account_info = get_account_info(&app, None).map_err(|e| e.to_string())?;
     let access_token = account_info.access_token.clone();
@@ -15,32 +15,37 @@ pub async fn get_store_data(app: tauri::AppHandle) -> Result<StorefrontResponse,
         .map_err(|e| e.to_string())?
         .entitlements_token;
 
-    let storefront = get_storefront(
+    let match_history: MatchHistoryResponse = get_match_history(
         &account_info.affinity,
         &puuid,
+        "0",
+        "20",
+        "0",
         client_platform,
         &client_version,
         &entitlement_token,
         &access_token,
-    )
-        .await?;
+    ).await?;
 
-    Ok(storefront)
+    Ok(match_history)
 }
 
-pub async fn get_storefront(
+pub async fn get_match_history(
     shard: &str,
     puuid: &str,
+    start_index: &str,
+    end_index: &str,
+    queue: &str,
     client_platform: &str,
     client_version: &str,
     entitlement_token: &str,
     access_token: &str,
-) -> Result<StorefrontResponse, String> {
-    let url = format!("https://pd.{}.a.pvp.net/store/v3/storefront/{}", shard, puuid);
+) -> Result<MatchHistoryResponse, String> {
+    let url = format!("https://pd.{}.a.pvp.net/match-history/v1/history/{}?startIndex={}&endIndex={}&queue={}", shard, puuid, start_index, end_index, queue);
 
     let client = reqwest::Client::new();
     let response = client
-        .post(&url)
+        .get(&url)
         .bearer_auth(access_token)
         .header("X-Riot-ClientPlatform", client_platform)
         .header("X-Riot-ClientVersion", client_version)
@@ -51,14 +56,14 @@ pub async fn get_storefront(
         .map_err(|e| e.to_string())?;
 
     if !response.status().is_success() {
-        println!("Failed to get storefront: {}", response.status());
+        println!("Failed to get match history: {}", response.status());
         return Err(format!(
-            "Failed to get storefront: {}",
+            "Failed to get match history: {}",
             response.status()
         ));
     }
 
-    let json = response.json::<StorefrontResponse>()
+    let json = response.json::<MatchHistoryResponse>()
         .await.map_err(|e| e.to_string())?;
 
     Ok(json)

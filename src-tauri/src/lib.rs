@@ -1,8 +1,10 @@
 mod auth;
 mod store;
+mod history;
 
 use crate::auth::*;
 use crate::store::*;
+use crate::history::*;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -14,6 +16,7 @@ pub fn run() {
             is_logged_in,
             get_account_info_command,
             get_store_data,
+            get_history_data,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
