@@ -5,9 +5,6 @@ use thiserror::Error;
 #[cfg(feature = "reqwest")]
 pub mod reqwest;
 
-#[cfg(feature = "tokio")]
-pub mod tokio;
-
 pub enum HttpMethod {
     Get, Post, Put, Delete, Patch, Options, Head
 }

@@ -1,11 +1,15 @@
-use crate::config::ValorantApiConfig;
 use crate::errors::ValorantApiError;
 use crate::http::HttpClient;
 use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoResponse, StorefrontResponse};
 
 pub struct ValorantApiClient<C: HttpClient> {
     http_client: C,
-    config: ValorantApiConfig,
+}
+
+impl <C: HttpClient> ValorantApiClient<C> {
+    pub fn new(http_client: C) -> Self {
+        Self { http_client }
+    }
 }
 
 impl<C: HttpClient> ValorantApiClient<C> {
@@ -67,4 +71,8 @@ impl<C: HttpClient> ValorantApiClient<C> {
     pub async fn get_riot_geo(&self, auth_token: &str, id_token: &str) -> Result<RiotGeoResponse, ValorantApiError> {
         unimplemented!()
     }
+}
+
+impl <C: HttpClient> ValorantApiClient<C> {
+
 }

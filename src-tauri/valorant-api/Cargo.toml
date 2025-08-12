@@ -10,9 +10,7 @@ thiserror = "2.0.12"
 async-trait = "0.1.88"
 
 reqwest = { version = "0.12.22", default-features = false, features = ["json", "rustls-tls"], optional = true }
-tokio = { version = "1.39.3", features = ["rt-multi-thread", "macros"], optional = true }
 
 [features]
 default = []
 reqwest = ["dep:reqwest"]
-tokio = ["dep:tokio"]
