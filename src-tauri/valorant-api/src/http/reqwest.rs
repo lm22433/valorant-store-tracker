@@ -1,6 +1,7 @@
 use crate::http::{HttpClient, HttpError, HttpMethod, HttpRequest, HttpResponse};
 use async_trait::async_trait;
 
+#[derive(Clone)]
 pub struct ReqwestHttpClient {
 	client: reqwest::Client,
 }
@@ -42,11 +43,11 @@ impl HttpClient for ReqwestHttpClient {
 		let mut req = self.client.request(method, &request.url);
 
 		for (name, value) in &request.headers {
-			let hname = reqwest::header::HeaderName::from_bytes(name.as_bytes())
+			let header_name = reqwest::header::HeaderName::from_bytes(name.as_bytes())
 				.map_err(|e| HttpError::Network(format!("invalid header name: {e}")))?;
-			let hvalue = reqwest::header::HeaderValue::from_str(value)
+			let header_value = reqwest::header::HeaderValue::from_str(value)
 				.map_err(|e| HttpError::Network(format!("invalid header value for {name}: {e}")))?;
-			req = req.header(hname, hvalue);
+			req = req.header(header_name, header_value);
 		}
 
 		if let Some(body) = request.body {
