@@ -4,9 +4,10 @@ import { PlayerInfoResponse } from '../../types';
 interface Props {
   user: PlayerInfoResponse | null;
   onRefresh: () => void;
+  onHome: () => void;
 }
 
-const Header: React.FC<Props> = ({ user, onRefresh }) => (
+const Header: React.FC<Props> = ({ user, onRefresh, onHome }) => (
   <header className="header">
     <div className="header-content">
       <div className="user-info">
@@ -21,6 +22,9 @@ const Header: React.FC<Props> = ({ user, onRefresh }) => (
       <div className="header-actions">
         <button className="refresh-button" onClick={onRefresh} title="Refresh Store">
           ↻
+        </button>
+        <button className="home-button" onClick={onHome} title="Home">
+          ⌂
         </button>
       </div>
     </div>
