@@ -1,15 +1,33 @@
 use thiserror::Error;
 
+use crate::http::HttpError;
+
 #[derive(Debug, Error)]
-pub enum ValApiError {
-    // #[error("HTTP request failed: {0}")]
-    // Http(#[from] reqwest::Error),
-    #[error("Unauthorized")]
+pub enum ValorantApiError {
+    #[error("HTTP error: {0}")]
+    Http(#[from] HttpError),
+
+    #[error("Serialization error: {0}")]
+    Serde(#[from] serde_json::Error),
+
+    #[error("Invalid configuration: {0}")]
+    Config(String),
+
+    #[error("Unauthorized or missing credentials")] 
     Unauthorized,
-    #[error("Not found")]
+
+    #[error("Forbidden")] 
+    Forbidden,
+
+    #[error("Not Found")] 
     NotFound,
-    #[error("{0}")]
+
+    #[error("Rate limited")] 
+    RateLimited,
+
+    #[error("Unexpected status {status}: {body}")]
+    UnexpectedStatus { status: u16, body: String },
+
+    #[error("Other: {0}")]
     Other(String),
 }
-
-pub type Result<T> = std::result::Result<T, ValApiError>;
