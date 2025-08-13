@@ -23,6 +23,7 @@ pub fn run() {
             is_logged_in,
             get_account_info_command,
             get_store_data,
+            get_wallet_info,
             get_history_data,
         ])
         .run(tauri::generate_context!())
