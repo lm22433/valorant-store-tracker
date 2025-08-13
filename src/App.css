@@ -285,6 +285,53 @@ body {
   text-align: center;
 }
 
+/* Currency Bar */
+.currency-section {
+  margin-bottom: 2rem;
+}
+
+.currency-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.currency-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+}
+
+.currency-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.currency-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.currency-name {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.currency-amount {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
 .store-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -454,6 +501,10 @@ body {
     gap: 1rem;
   }
   
+  .currency-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
   .app-title {
     font-size: 2rem;
   }
@@ -470,5 +521,9 @@ body {
   
   .time-number {
     font-size: 1.5rem;
+  }
+  
+  .currency-grid {
+    grid-template-columns: 1fr;
   }
 }

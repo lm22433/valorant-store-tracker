@@ -5,10 +5,11 @@ import LoadingScreen from './common/LoadingScreen';
 import Header from './store/Header';
 import StoreCountdown from './store/StoreCountdown';
 import StoreItems from './store/StoreItems';
+import CurrencyBar from './store/CurrencyBar';
 import { processStoreData } from '../store/processStoreData';
 
 const Store: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) => {
-  const { user, store, skinData, isLoading, error, refetch } = useStoreData();
+  const { user, store, wallet, skinData, isLoading, error, refetch } = useStoreData();
 
   const processedStore = useMemo(() => {
     if (!store || !skinData.length) return null;
@@ -39,6 +40,7 @@ const Store: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) =
     <div className="home">
       <Header user={user} onRefresh={handleRefresh} onHome={onHome} />
       <main className="main-content">
+        <CurrencyBar wallet={wallet} />
         <StoreCountdown timeRemaining={timeRemaining} />
         <section className="store-section">
           <h3 className="section-title">Daily Store</h3>

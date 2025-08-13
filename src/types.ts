@@ -181,6 +181,48 @@ export interface UpgradeCurrencyStore {
   UpgradeCurrencyOffers: UpgradeCurrencyOffer[];
 }
 
+// Wallet types (mirror Rust model serialization keys)
+export interface WalletResponse {
+  Balances: BalancesInternal;
+  CurrencyLimits: CurrencyLimits;
+}
+
+export interface BalancesInternal {
+  // Valorant Points
+  "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"?: number;
+  // Kingdom Credits
+  "85ca954a-41f2-ce94-9b45-8ca3dd39a00d"?: number;
+  // Radianite Points
+  "e59aa87c-4cbf-517a-5983-6e81511be9b7"?: number;
+  // Free Agents (contracts)
+  "f08d4ae3-939c-4576-ab26-09ce1f23bb37"?: number;
+}
+
+export interface CurrencyLimits {
+  // Kingdom Credits limits
+  "85ca954a-41f2-ce94-9b45-8ca3dd39a00d"?: CreditLimits;
+  // Valorant Points limits
+  "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"?: CreditLimits;
+  // Radianite limits
+  "e59aa87c-4cbf-517a-5983-6e81511be9b7"?: CreditLimits;
+  // Free Agents limits
+  "f08d4ae3-939c-4576-ab26-09ce1f23bb37"?: CreditLimits;
+}
+
+export interface CreditLimits {
+  Limits?: Limits;
+}
+
+export interface Limits {
+  // Single limit entry keyed by GUID in the API
+  "bdf142e6-72fa-5f47-8983-8a68e902abb5"?: Limit;
+}
+
+export interface Limit {
+  amount?: number;
+  limitType?: string;
+}
+
 // Type guards for runtime type checking (optional but recommended)
 export const isStorefrontResponse = (obj: any): obj is StorefrontResponse => {
   return obj && 
@@ -208,11 +250,15 @@ export const isOffer = (obj: any): obj is Offer => {
 export type CurrencyType = keyof Cost;
 export type ValorantPointsId = "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741";
 export type KingdomCreditsId = "85ca954a-41f2-ce94-9b45-8ca3dd39a00d";
+export type RadianiteId = "e59aa87c-4cbf-517a-5983-6e81511be9b7";
+export type FreeAgentsId = "f08d4ae3-939c-4576-ab26-09ce1f23bb37";
 
 // Constants for currency IDs
 export const CURRENCY_IDS = {
   VALORANT_POINTS: "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741" as const,
   KINGDOM_CREDITS: "85ca954a-41f2-ce94-9b45-8ca3dd39a00d" as const,
+  RADIANITE: "e59aa87c-4cbf-517a-5983-6e81511be9b7" as const,
+  FREE_AGENTS: "f08d4ae3-939c-4576-ab26-09ce1f23bb37" as const,
 } as const;
 
 

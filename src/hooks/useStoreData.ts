@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { PlayerInfoResponse, StorefrontResponse } from '../types';
+import { PlayerInfoResponse, StorefrontResponse, WalletResponse } from '../types';
 import { ValorantAPIResponse, ValorantSkin } from '../store/types';
 
 interface UseStoreDataResult {
 	user: PlayerInfoResponse | null;
 	store: StorefrontResponse | null;
+	wallet: WalletResponse | null;
 	skinData: ValorantSkin[];
 	isLoading: boolean;
 	error: string | null;
@@ -15,6 +16,7 @@ interface UseStoreDataResult {
 export const useStoreData = (): UseStoreDataResult => {
 	const [user, setUser] = useState<PlayerInfoResponse | null>(null);
 	const [store, setStore] = useState<StorefrontResponse | null>(null);
+	const [wallet, setWallet] = useState<WalletResponse | null>(null);
 	const [skinData, setSkinData] = useState<ValorantSkin[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -36,13 +38,15 @@ export const useStoreData = (): UseStoreDataResult => {
 		try {
 			setIsLoading(true);
 			setError(null);
-			const [userInfo, storeResponse, skins] = await Promise.all([
+			const [userInfo, storeResponse, walletInfo, skins] = await Promise.all([
 				invoke<PlayerInfoResponse>('get_account_info_command'),
 				invoke<StorefrontResponse>('get_store_data'),
+				invoke<WalletResponse>('get_wallet_info'),
 				fetchSkinData()
 			]);
 			setUser(userInfo);
 			setStore(storeResponse);
+			setWallet(walletInfo);
 			setSkinData(skins);
 		} catch (error) {
 			console.error('Failed to fetch data:', error);
@@ -56,7 +60,7 @@ export const useStoreData = (): UseStoreDataResult => {
 		fetchData();
 	}, [fetchData]);
 
-	return { user, store, skinData, isLoading, error, refetch: fetchData };
+	return { user, store, wallet, skinData, isLoading, error, refetch: fetchData };
 };
 
 export default useStoreData;

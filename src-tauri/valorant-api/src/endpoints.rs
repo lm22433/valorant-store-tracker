@@ -10,6 +10,13 @@ pub fn storefront_url(shard: &str, puuid: &str) -> String {
 	)
 }
 
+pub fn wallet_url(shard: &str, puuid: &str) -> String {
+	format!(
+		"https://pd.{}.a.pvp.net/store/v1/wallet/{}",
+		shard, puuid
+	)
+}
+
 #[inline]
 pub fn match_history_url(shard: &str, puuid: &str, start_index: &str, end_index: &str, queue: &str) -> String {
 	format!(

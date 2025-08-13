@@ -691,3 +691,63 @@ pub struct MatchDetailsResponse {
     }[] | null;
 }
 */
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct WalletResponse {
+    #[serde(rename = "Balances")]
+    pub balances: BalancesInternal,
+
+    #[serde(rename = "CurrencyLimits")]
+    pub currency_limits: CurrencyLimits,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BalancesInternal {
+    #[serde(rename = "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741")]
+    pub valorant_points: Option<i64>,
+
+    #[serde(rename = "85ca954a-41f2-ce94-9b45-8ca3dd39a00d")]
+    pub kingdom_credits: Option<i64>,
+
+    #[serde(rename = "e59aa87c-4cbf-517a-5983-6e81511be9b7")]
+    pub radianite: Option<i64>,
+
+    #[serde(rename = "f08d4ae3-939c-4576-ab26-09ce1f23bb37")]
+    pub free_agents: Option<i64>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CurrencyLimits {
+    #[serde(rename = "85ca954a-41f2-ce94-9b45-8ca3dd39a00d")]
+    pub kingdom_credits_limits: Option<CreditLimits>,
+
+    #[serde(rename = "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741")]
+    pub valorant_points_limits: Option<CreditLimits>,
+
+    #[serde(rename = "e59aa87c-4cbf-517a-5983-6e81511be9b7")]
+    pub radianite_limits: Option<CreditLimits>,
+
+    #[serde(rename = "f08d4ae3-939c-4576-ab26-09ce1f23bb37")]
+    pub free_agents_limits: Option<CreditLimits>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CreditLimits {
+    #[serde(rename = "Limits")]
+    pub limits: Option<Limits>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Limits {
+    #[serde(rename = "bdf142e6-72fa-5f47-8983-8a68e902abb5")]
+    pub limit: Option<Limit>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Limit {
+    #[serde(rename = "amount")]
+    pub amount: Option<i32>,
+
+    #[serde(rename = "limitType")]
+    pub limit_type: Option<String>,
+}
