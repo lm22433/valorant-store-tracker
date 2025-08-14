@@ -5,8 +5,14 @@ use valorant_api::client::ValorantApiClient;
 use valorant_api::http::reqwest::ReqwestHttpClient;
 use tauri::Manager;
 
+#[derive(Deserialize)]
+pub struct GetHistoryDataArgs {
+    #[serde(rename = "queueId")]
+    queue_id: String,
+}
+
 #[tauri::command]
-pub async fn get_history_data(app: tauri::AppHandle) -> Result<MatchHistoryResponse, String> {
+pub async fn get_history_data(app: tauri::AppHandle, args: GetHistoryDataArgs) -> Result<MatchHistoryResponse, String> {
     let puuid = get_active_account(&app).map_err(|e| e.to_string())?;
     let account_info = get_account_info(&app, None).map_err(|e| e.to_string())?;
     let access_token = account_info.access_token.clone();
@@ -26,7 +32,7 @@ pub async fn get_history_data(app: tauri::AppHandle) -> Result<MatchHistoryRespo
             &puuid,
             "0",
             "20",
-            "competitive",
+            &args.queue_id,
             client_platform,
             &client_version,
             &entitlement_token,
@@ -61,7 +67,7 @@ pub async fn get_match_data(app: tauri::AppHandle, args: GetMatchDataArgs) -> Re
     let match_details: MatchDetailsResponse = api
         .get_match_details(
             &account_info.affinity,
-            args.match_id.as_str(),
+            &args.match_id,
             client_platform,
             &client_version,
             &entitlement_token,

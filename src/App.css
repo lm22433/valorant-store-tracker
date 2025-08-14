@@ -50,7 +50,7 @@ body {
 .match-overview-won {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   cursor: pointer;
   font-size: larger;
   font-weight: 600;
@@ -66,7 +66,7 @@ body {
 .match-overview-lost {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   cursor: pointer;
   font-size: larger;
   font-weight: 600;
@@ -77,6 +77,42 @@ body {
   height: 4rem;
   padding: 1rem;
   margin: 1rem 0;
+}
+
+.map-name {
+  flex-shrink: 0;
+}
+
+.score {
+  flex-shrink: 0;
+}
+
+.queue-type {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.no-matches {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+
+.history-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-top-row h1 {
+  font-size: xx-large;
+}
+
+.match-filter select {
+  height: 100%; /* does nothing??? */
 }
 
 .score {

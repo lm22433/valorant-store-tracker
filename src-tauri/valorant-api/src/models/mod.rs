@@ -579,7 +579,7 @@ pub struct Player {
     pub game_name: String,
     pub tag_line: String,
     pub platform_info: PlatformInfo,
-    pub team_id: TeamId, // Not strict enum because TypeScript allowed string
+    pub team_id: String, // Not strict enum because TypeScript allowed string
     pub party_id: String,
     pub character_id: String,
     pub stats: Option<PlayerStats>,
@@ -651,14 +651,14 @@ pub struct XpModification {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BehaviorFactors {
-    pub afk_rounds: i64,
+    pub afk_rounds: f64,
     pub collisions: Option<f64>,
-    pub comms_rating_recovery: i64,
-    pub damage_participation_outgoing: i64,
-    pub friendly_fire_incoming: Option<i64>,
-    pub friendly_fire_outgoing: Option<i64>,
-    pub mouse_movement: Option<i64>,
-    pub stayed_in_spawn_rounds: Option<i64>,
+    pub comms_rating_recovery: f64,
+    pub damage_participation_outgoing: f64,
+    pub friendly_fire_incoming: Option<f64>,
+    pub friendly_fire_outgoing: Option<f64>,
+    pub mouse_movement: Option<f64>,
+    pub stayed_in_spawn_rounds: Option<f64>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -718,7 +718,7 @@ pub struct Coach {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Team {
-    pub team_id: TeamId,
+    pub team_id: String,
     pub won: bool,
     pub rounds_played: i64,
     pub rounds_won: i64,

@@ -12,6 +12,13 @@ pub fn storefront_url(shard: &str, puuid: &str) -> String {
 
 #[inline]
 pub fn match_history_url(shard: &str, puuid: &str, start_index: &str, end_index: &str, queue: &str) -> String {
+	if queue.eq("") || queue.eq(" ") {
+		return format!(
+			"https://pd.{}.a.pvp.net/match-history/v1/history/{}?startIndex={}&endIndex={}",
+			shard, puuid, start_index, end_index
+		);
+	}
+
 	format!(
 		"https://pd.{}.a.pvp.net/match-history/v1/history/{}?startIndex={}&endIndex={}&queue={}",
 		shard, puuid, start_index, end_index, queue

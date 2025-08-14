@@ -10,7 +10,7 @@ interface UseHistoryDataResult {
 	refetch: () => void;
 }
 
-export const useHistoryData = (): UseHistoryDataResult => {
+export const useHistoryData = (queueId: string): UseHistoryDataResult => {
 	const [user, setUser] = useState<PlayerInfoResponse | null>(null);
 	const [matches, setMatches] = useState<MatchDetailsResponse[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -22,25 +22,23 @@ export const useHistoryData = (): UseHistoryDataResult => {
 			setError(null);
 			const [userResponse, historyResponse] = await Promise.all([
 				invoke<PlayerInfoResponse>('get_account_info_command'),
-				invoke<MatchHistoryResponse>('get_history_data')
+				invoke<MatchHistoryResponse>('get_history_data', {args: {queueId: queueId}})
 			]);
 			setUser(userResponse);
 
-			if (historyResponse && historyResponse.History.length > 0) {
-				const matchDetailsList = await Promise.all(
-					historyResponse.History.map(match =>
-						invoke<MatchDetailsResponse>('get_match_data', {args: {matchId: match.MatchID}})
-					)
-				);
-				setMatches(matchDetailsList);
-			}
+			const matchDetailsList = await Promise.all(
+				historyResponse.History.map(match =>
+					invoke<MatchDetailsResponse>('get_match_data', {args: {matchId: match.MatchID}})
+				)
+			);
+			setMatches(matchDetailsList);
 		} catch (error) {
 			console.error('Failed to fetch match history:', error);
 			setError(error instanceof Error ? error.message : typeof(error) === 'string' ? error : 'Failed to fetch match history');
 		} finally {
 			setIsLoading(false);
 		}
-	}, []);
+	}, [queueId]);
 
 	useEffect(() => {
 		fetchData();

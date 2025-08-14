@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Match from './history/Match';
 import useHistoryData from '../hooks/useHistoryData';
 import LoadingScreen from './common/LoadingScreen';
@@ -9,9 +9,10 @@ interface HistoryProps {
 
 const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
 
-    const { user, matches, isLoading, error, refetch } = useHistoryData();
+    const [queueID, setQueueID] = useState<string>("");
+    const { user, matches, isLoading, error, refetch } = useHistoryData(queueID);
+    
     registerRefetch(() => refetch);
-
 
     if (isLoading) return <LoadingScreen message="Loading your matches..." />;
 
@@ -30,8 +31,30 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
     return (
         <div className="home">
             <main className="main-content">
-                <h1>Match History</h1>
-                {matches.map((match) => <Match key={match.matchInfo.matchId} match={match} user={user}/>)}
+                <section className="history-top-row">
+                    <h1>Match History</h1>
+                    <div className="match-filter">
+                        <select 
+                            name="queueId"
+                            value={queueID}
+                            onChange={e => {setQueueID(e.target.value);}}
+                        >
+                            <option value="">All</option>
+                            <option value="unrated">Unrated</option>
+                            <option value="competitive">Competitive</option>
+                            <option value="deathmatch">Deathmatch</option>
+                            <option value="spikerush">Spike Rush</option>
+                            <option value="swiftplay">Swiftplay</option>
+                        </select>
+                    </div>
+                </section>
+                <section className="match-list">
+                    {matches.length > 0 ? matches.map((match) => <Match key={match.matchInfo.matchId} match={match} user={user}/>)
+                    :
+                    <div className="no-matches">
+                        <h2>No Matches to Display</h2>
+                    </div>}
+                </section>
             </main>
         </div>
     );

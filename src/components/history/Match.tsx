@@ -20,15 +20,15 @@ const mapNames: Record<string, string> = {
 
 interface MatchProps {
     match: MatchDetailsResponse;
-    user: PlayerInfoResponse;
+    user: PlayerInfoResponse | null;
 }
 
 const Match: React.FC<MatchProps> = ({match, user}) => {
 
     // there must be a better way...
-    const playerTeamId = match.players.find(player => player.gameName == user.acct.game_name && player.tagLine == user.acct.tag_line)!.teamId;
+    const playerTeamId = user ? match.players.find(player => player.gameName == user.acct.game_name && player.tagLine == user.acct.tag_line)!.teamId : "Blue";
     const playerTeam = match.teams!.find(team => playerTeamId === team.teamId)!;
-    const enemyTeam = match.teams!.find(team => playerTeamId !== team.teamId)!;
+    // const enemyTeam = match.teams!.find(team => playerTeamId !== team.teamId)!;
 
     if (playerTeam.won) {
         return (
