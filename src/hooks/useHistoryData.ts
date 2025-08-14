@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { MatchDetailsResponse, MatchHistoryResponse, PlayerInfoResponse } from '../types';
+import { MatchDetailsResponse, MatchHistoryResponse } from '../types';
 
 interface UseHistoryDataResult {
-	user: PlayerInfoResponse | null;
 	matches: MatchDetailsResponse[];
 	isLoading: boolean;
 	error: string | null;
@@ -11,7 +10,6 @@ interface UseHistoryDataResult {
 }
 
 export const useHistoryData = (): UseHistoryDataResult => {
-	const [user, setUser] = useState<PlayerInfoResponse | null>(null);
 	const [history, setHistory] = useState<MatchHistoryResponse | null>(null);
 	const [matches, setMatches] = useState<MatchDetailsResponse[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -21,11 +19,7 @@ export const useHistoryData = (): UseHistoryDataResult => {
 		try {
 			setIsLoading(true);
 			setError(null);
-			const [userInfo, historyResponse] = await Promise.all([
-				invoke<PlayerInfoResponse>('get_account_info_command'),
-				invoke<MatchHistoryResponse>('get_history_data'),
-			]);
-			setUser(userInfo);
+			let historyResponse = await invoke<MatchHistoryResponse>('get_history_data');
 			setHistory(historyResponse);
 		} catch (error) {
 			console.error('Failed to fetch match history:', error);
@@ -93,7 +87,7 @@ export const useHistoryData = (): UseHistoryDataResult => {
 
 	// setMatches(matches.concat([test]));
 
-	return { user, matches, isLoading, error, refetch: fetchData };
+	return { matches, isLoading, error, refetch: fetchData };
 };
 
 export default useHistoryData;

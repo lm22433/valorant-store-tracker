@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import useStoreData from '../hooks/useStoreData';
 import useTimer from '../hooks/useTimer';
 import LoadingScreen from './common/LoadingScreen';
@@ -6,8 +6,14 @@ import StoreCountdown from './store/StoreCountdown';
 import StoreItems from './store/StoreItems';
 import { processStoreData } from '../store/processStoreData';
 
-const Store: React.FC = () => {
+interface StoreProps {
+    registerRefetch: (fn: () => void) => void;
+}
+
+const Store: React.FC<StoreProps> = ({ registerRefetch }) => {
   const { store, skinData, isLoading, error, refetch } = useStoreData();
+
+  registerRefetch(() => refetch);
 
   const processedStore = useMemo(() => {
     if (!store || !skinData.length) return null;
@@ -15,10 +21,6 @@ const Store: React.FC = () => {
   }, [store, skinData]);
 
   const timeRemaining = useTimer(processedStore?.timeUntilReset || 0);
-
-  const handleRefresh = useCallback(() => {
-    refetch();
-  }, [refetch]);
 
   if (isLoading) return <LoadingScreen message="Loading your store..." />;
 
@@ -28,7 +30,7 @@ const Store: React.FC = () => {
         <div className="error-card">
           <h2>Something went wrong</h2>
             <p>{error}</p>
-          <button onClick={handleRefresh} className="retry-button">Try Again</button>
+          <button onClick={refetch} className="retry-button">Try Again</button>
         </div>
       </div>
     );

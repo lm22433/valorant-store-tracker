@@ -16,17 +16,31 @@ const Home: React.FC = () => {
     }
     
     const [content, setContent] = useState(Content.Empty);
+    const [activeContentRefetch, setActiveContentRefetch] = useState<(() => void) | null>(null);
     const { user, isLoading, error, refetch } = useUserData();
 
     const handleHome = () => {
         setContent(Content.Empty);
+        setActiveContentRefetch(null);
     }
 
-    const handleRefresh = useCallback(() => {
-        refetch();
-    }, [refetch]);
+    // const handleRefresh = useCallback(() => {
+    //     if (activeContentRefetch) {
+    //         activeContentRefetch();
+    //     } else {
+    //         refetch();
+    //     }
+    // }, [refetch, activeContentRefetch]);
 
-    if (isLoading) return <LoadingScreen message="Loading your store..." />;
+    const handleRefresh = useCallback(() => {
+        if (activeContentRefetch) {
+            activeContentRefetch();
+        } else {
+            refetch();
+        }
+    }, [activeContentRefetch]);
+
+    if (isLoading) return <LoadingScreen message="Loading your home..." />;
 
     if (error) {
         return (
@@ -55,11 +69,11 @@ const Home: React.FC = () => {
                             </div>
                         )
                     case Content.Store:
-                        return <Store/>;
+                        return <Store registerRefetch={setActiveContentRefetch}/>;
                     case Content.Live:
                         return <Live/>;
                     case Content.History:
-                        return <History/>;
+                        return <History registerRefetch={setActiveContentRefetch}/>;
                     default:
                         return <></>;
                 }

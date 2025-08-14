@@ -1,15 +1,17 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import Match from './history/Match';
 import useHistoryData from '../hooks/useHistoryData';
 import LoadingScreen from './common/LoadingScreen';
 
-const History: React.FC = () => {
+interface HistoryProps {
+    registerRefetch: (fn: () => void) => void;
+}
 
-    const { user, matches, isLoading, error, refetch } = useHistoryData();
+const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
 
-    const handleRefresh = useCallback(() => {
-        refetch();
-    }, [refetch]);
+    const { matches, isLoading, error, refetch } = useHistoryData();
+    registerRefetch(() => refetch);
+
 
     if (isLoading) return <LoadingScreen message="Loading your matches..." />;
 
@@ -19,7 +21,7 @@ const History: React.FC = () => {
             <div className="error-card">
             <h2>Something went wrong</h2>
                 <p>{error}</p>
-            <button onClick={handleRefresh} className="retry-button">Try Again</button>
+            <button onClick={refetch} className="retry-button">Try Again</button>
             </div>
         </div>
         );
