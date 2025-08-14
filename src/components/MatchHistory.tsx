@@ -9,7 +9,7 @@ interface HistoryProps {
 
 const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
 
-    const { history, matches, isLoading, error, refetch } = useHistoryData();
+    const { user, matches, isLoading, error, refetch } = useHistoryData();
     registerRefetch(() => refetch);
 
 
@@ -31,7 +31,7 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
         <div className="home">
             <main className="main-content">
                 <h1>Match History</h1>
-                {matches.map((match) => <Match key={match.matchInfo.matchId} match={match}/>)}
+                {matches.map((match) => <Match key={match.matchInfo.matchId} match={match} user={user}/>)}
             </main>
         </div>
     );

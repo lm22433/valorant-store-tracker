@@ -14,8 +14,8 @@ export const useUserData = () => {
             const userInfo = await invoke<PlayerInfoResponse>('get_account_info_command');
             setUser(userInfo);
         } catch (error) {
-            console.error('Failed to fetch data:', error);
-            setError(error instanceof Error ? error.message : 'Failed to fetch data');
+            console.error('Failed to fetch user data:', error);
+            setError(error instanceof Error ? error.message : typeof(error) === 'string' ? error : 'Failed to fetch user data');
         } finally {
             setIsLoading(false);
         }

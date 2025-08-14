@@ -45,8 +45,8 @@ export const useStoreData = (): UseStoreDataResult => {
 			setStore(storeResponse);
 			setSkinData(skins);
 		} catch (error) {
-			console.error('Failed to fetch data:', error);
-			setError(error instanceof Error ? error.message : 'Failed to fetch data');
+			console.error('Failed to fetch store data:', error);
+			setError(error instanceof Error ? error.message : typeof(error) === 'string' ? error : 'Failed to fetch store data');
 		} finally {
 			setIsLoading(false);
 		}

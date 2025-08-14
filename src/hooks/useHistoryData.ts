@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { MatchDetailsResponse, MatchHistoryResponse } from '../types';
+import { PlayerInfoResponse, MatchDetailsResponse, MatchHistoryResponse } from '../types';
 
 interface UseHistoryDataResult {
-	history: MatchHistoryResponse | null;
+	user: PlayerInfoResponse | null;
 	matches: MatchDetailsResponse[];
 	isLoading: boolean;
 	error: String | null;
@@ -11,7 +11,7 @@ interface UseHistoryDataResult {
 }
 
 export const useHistoryData = (): UseHistoryDataResult => {
-	const [history, setHistory] = useState<MatchHistoryResponse | null>(null);
+	const [user, setUser] = useState<PlayerInfoResponse | null>(null);
 	const [matches, setMatches] = useState<MatchDetailsResponse[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<String | null>(null);
@@ -20,8 +20,11 @@ export const useHistoryData = (): UseHistoryDataResult => {
 		try {
 			setIsLoading(true);
 			setError(null);
-			const historyResponse = await invoke<MatchHistoryResponse>('get_history_data');
-			setHistory(historyResponse);
+			const [userResponse, historyResponse] = await Promise.all([
+				invoke<PlayerInfoResponse>('get_account_info_command'),
+				invoke<MatchHistoryResponse>('get_history_data')
+			]);
+			setUser(userResponse);
 
 			if (historyResponse && historyResponse.History.length > 0) {
 				const matchDetailsList = await Promise.all(
@@ -43,47 +46,7 @@ export const useHistoryData = (): UseHistoryDataResult => {
 		fetchData();
 	}, [fetchData]);
 
-	// const test: MatchDetailsResponse = {
-	// 	matchInfo: {
-    //     	/** Match ID */
-	// 		matchId: "aldnssd",
-	// 		/** Map ID */
-	// 		mapId: "haven",
-	// 		gamePodId: "",
-	// 		gameLoopZone: "",
-	// 		gameServerAddress: "",
-	// 		gameVersion: "",
-	// 		gameLengthMillis: null,
-	// 		gameStartMillis: 0,
-	// 		provisioningFlowID: "Matchmaking",
-	// 		isCompleted: true,
-	// 		customGameName: "",
-	// 		forcePostProcessing: false,
-	// 		/** Queue ID */
-	// 		queueID: "competitive",
-	// 		/** Game Mode */
-	// 		gameMode: "",
-	// 		isRanked: true,
-	// 		isMatchSampled: false,
-	// 		/** Season ID */
-	// 		seasonId: "",
-	// 		completionState: "",
-	// 		platformType: "PC",
-	// 		premierMatchInfo: {},
-	// 		partyRRPenalties: undefined,
-	// 		shouldMatchDisablePenalties: false,
-	// 	},
-    // 	players: [],
-	// 	bots: [],
-	// 	coaches: [],
-	// 	teams: null,
-	// 	roundResults: null,
-	// 	kills: null,
-	// };
-
-	// setMatches(matches.concat([test]));
-
-	return { history, matches, isLoading, error, refetch: fetchData };
+	return { user, matches, isLoading, error, refetch: fetchData };
 };
 
 export default useHistoryData;

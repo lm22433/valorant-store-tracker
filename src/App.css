@@ -47,6 +47,48 @@ body {
   background: linear-gradient(135deg, #ff4656a8 0%, #ff6b3578 100%);
 }
 
+.match-overview-won {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: larger;
+  font-weight: 600;
+  background: rgba(128, 255, 128, 0.17);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  height: 4rem;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.match-overview-lost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: larger;
+  font-weight: 600;
+  background: rgba(255, 128, 128, 0.17);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  height: 4rem;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.score {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.map-name {
+  margin-right: auto;
+  margin-left: 0; 
+}
+
 /* Login Screen */
 .login-container {
   min-height: 100vh;
