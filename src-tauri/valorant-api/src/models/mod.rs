@@ -460,11 +460,12 @@ pub struct AbilityEffects {
 pub enum TeamId {
     Blue,
     Red,
+    #[serde(rename = "")]
+    Empty,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "PascalCase")]
-pub enum ProvisioningFlowId {
+pub enum ProvisioningFlowID {
     Matchmaking,
     CustomGame,
 }
@@ -480,8 +481,8 @@ pub enum CompletionState {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "PascalCase")]
 pub enum PlatformType {
+    #[serde(rename = "pc")]
     PC,
 }
 
@@ -548,10 +549,13 @@ pub struct MatchInfo {
     pub game_version: String,
     pub game_length_millis: Option<i64>,
     pub game_start_millis: i64,
-    pub provisioning_flow_id: ProvisioningFlowId,
+    #[serde(rename = "provisioningFlowID")]
+    pub provisioning_flow_id: ProvisioningFlowID,
     pub is_completed: bool,
+    pub is_early_completion: bool,
     pub custom_game_name: String,
     pub force_post_processing: bool,
+    #[serde(rename = "queueID")]
     pub queue_id: String,
     pub game_mode: String,
     pub is_ranked: bool,
@@ -562,6 +566,8 @@ pub struct MatchInfo {
     pub premier_match_info: Value,
     pub party_rr_penalties: Option<HashMap<String, i64>>,
     pub should_match_disable_penalties: bool,
+    pub new_map_loss_reduction_modifier: i64,
+    pub is_replay_recorded: bool,
 }
 
 /* ===== Players ===== */
@@ -573,7 +579,7 @@ pub struct Player {
     pub game_name: String,
     pub tag_line: String,
     pub platform_info: PlatformInfo,
-    pub team_id: String, // Not strict enum because TypeScript allowed string
+    pub team_id: TeamId, // Not strict enum because TypeScript allowed string
     pub party_id: String,
     pub character_id: String,
     pub stats: Option<PlayerStats>,
@@ -594,7 +600,9 @@ pub struct Player {
 #[serde(rename_all = "camelCase")]
 pub struct PlatformInfo {
     pub platform_type: PlatformType,
+    #[serde(rename = "platformOS")]
     pub platform_os: String,
+    #[serde(rename = "platformOSVersion")]
     pub platform_os_version: String,
     pub platform_chipset: String,
 }
@@ -629,10 +637,15 @@ pub struct RoundDamage {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct XpModification {
-    pub value: i64,
+    #[serde(rename = "Value")]
+    pub value: f64,
+    #[serde(rename = "ID")]
     pub id: String,
+    #[serde(rename = "IncludeInV2")]
+    pub include_in_v2: bool,
+    #[serde(rename = "Type")]
+    pub xp_type: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -705,7 +718,7 @@ pub struct Coach {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Team {
-    pub team_id: String,
+    pub team_id: TeamId,
     pub won: bool,
     pub rounds_played: i64,
     pub rounds_won: i64,

@@ -24,21 +24,13 @@ const Home: React.FC = () => {
         setActiveContentRefetch(null);
     }
 
-    // const handleRefresh = useCallback(() => {
-    //     if (activeContentRefetch) {
-    //         activeContentRefetch();
-    //     } else {
-    //         refetch();
-    //     }
-    // }, [refetch, activeContentRefetch]);
-
     const handleRefresh = useCallback(() => {
         if (activeContentRefetch) {
             activeContentRefetch();
         } else {
             refetch();
         }
-    }, [activeContentRefetch]);
+    }, [activeContentRefetch, refetch]);
 
     if (isLoading) return <LoadingScreen message="Loading your home..." />;
 

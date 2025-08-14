@@ -5,7 +5,7 @@ const Match: React.FC<{match: MatchDetailsResponse}> = ({match}: {match: MatchDe
 
     return (
         <div>
-            {match.matchInfo.matchId}
+            {match.matchInfo.mapId}
         </div>
     )
 }
