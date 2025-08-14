@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PlayerInfoResponse, MatchDetailsResponse } from '../../types';
 
 
@@ -20,45 +20,39 @@ const mapNames: Record<string, string> = {
 
 interface MatchProps {
     match: MatchDetailsResponse;
-    user: PlayerInfoResponse | null;
+    user: PlayerInfoResponse;
 }
 
 const Match: React.FC<MatchProps> = ({match, user}) => {
 
+    const [expanded, setExpanded] = useState<boolean>(false);
+
     // there must be a better way...
-    const playerTeamId = user ? match.players.find(player => player.gameName == user.acct.game_name && player.tagLine == user.acct.tag_line)!.teamId : "Blue";
-    const playerTeam = match.teams!.find(team => playerTeamId === team.teamId)!;
+    const player = match.players.find(player => player.gameName == user.acct.game_name && player.tagLine == user.acct.tag_line)!;
+    const playerTeam = match.teams!.find(team => player.teamId === team.teamId)!;
     // const enemyTeam = match.teams!.find(team => playerTeamId !== team.teamId)!;
 
-    if (playerTeam.won) {
-        return (
-            <div className="match-overview-won">
-                <div className="map-name">
-                    {mapNames[match.matchInfo.mapId.split("/").pop()!]}
-                </div>
+    return (
+        <div className={playerTeam.won ? "match-won" : "match-lost"} onClick={() => setExpanded(!expanded)}>
+            <section className="match-overview">
+                <p>{mapNames[match.matchInfo.mapId.split("/").pop()!]}</p>
                 <div className="queue-type">
                     {match.matchInfo.queueID.toLocaleUpperCase()}
                 </div>
-                <div className="score">
-                    {match.teams![0].roundsWon} : {match.teams![1].roundsWon}
+                <div style={{width: "10rem", display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
+                    <p>ACS: {Math.round(player.stats!.score / playerTeam.roundsPlayed)}</p>
+                    <p>{match.teams![0].roundsWon} : {match.teams![1].roundsWon}</p>
                 </div>
-            </div>
-        )
-    } else {
-        return (
-            <div className="match-overview-lost">
-                <div className="map-name">
-                    {mapNames[match.matchInfo.mapId.split("/").pop()!]}
-                </div>
-                <div className="queue-type">
-                    {match.matchInfo.queueID.toLocaleUpperCase()}
-                </div>
-                <div className="score">
-                    {match.teams![0].roundsWon} : {match.teams![1].roundsWon}
-                </div>
-            </div>
-        )
-    }
+            </section>
+            {expanded ?
+            <section className="match-details">
+                <p>match details</p>
+                <p>more match details</p>
+                <p>yet more details!!!</p>
+            </section>
+            : <></>}
+        </div>
+    )
 }
 
 export default Match

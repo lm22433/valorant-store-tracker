@@ -49,7 +49,7 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
                     </div>
                 </section>
                 <section className="match-list">
-                    {matches.length > 0 ? matches.map((match) => <Match key={match.matchInfo.matchId} match={match} user={user}/>)
+                    {matches.length > 0 ? matches.map((match) => <Match key={match.matchInfo.matchId} match={match} user={user!}/>)
                     :
                     <div className="no-matches">
                         <h2>No Matches to Display</h2>
