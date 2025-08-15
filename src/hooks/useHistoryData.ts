@@ -21,8 +21,11 @@ export const useHistoryData = (queueId: string): UseHistoryDataResult => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<String | null>(null);
 
+	const cachedMaps = useRef<ValorantMap[]>([]);
+	const cachedAgents = useRef<ValorantAgent[]>([]);
+
 	const fetchMapData = useCallback(async (): Promise<ValorantMap[]> => {
-		if (maps.length) return maps;
+		if (cachedMaps.current.length) return cachedMaps.current;
 		try {
 			const response = await fetch('https://valorant-api.com/v1/maps');
 			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -39,9 +42,9 @@ export const useHistoryData = (queueId: string): UseHistoryDataResult => {
 	}, []);
 
 	const fetchAgentData = useCallback(async (): Promise<ValorantAgent[]> => {
-		if (agents.length) return agents;
+		if (cachedAgents.current.length) return cachedAgents.current;
 		try {
-			const response = await fetch('https://valorant-api.com/v1/agents');
+			const response = await fetch('https://valorant-api.com/v1/agents?isPlayableCharacter=true');
 			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 			const data: ValorantAPIAgentResponse = await response.json();
 			if (data.status === 200) return (data.data.map(agent => ({
@@ -69,6 +72,8 @@ export const useHistoryData = (queueId: string): UseHistoryDataResult => {
 			setUser(userResponse);
 			setMaps(mapResponse);
 			setAgents(agentResponse);
+			cachedMaps.current = mapResponse;
+			cachedAgents.current = agentResponse;
 
 			const matchDetailsList = await Promise.all(
 				historyResponse.History.map(match =>
@@ -84,10 +89,10 @@ export const useHistoryData = (queueId: string): UseHistoryDataResult => {
 		}
 	}, [queueId]);
 
-	const fetched = useRef(false);
+	const lastQueueID = useRef<string | null>(null);
 	useEffect(() => {
-		if (fetched.current) return;
-		fetched.current = true;
+		if (lastQueueID.current === queueId) return;
+		lastQueueID.current = queueId;
 		fetchData();
 	}, [fetchData]);
 
