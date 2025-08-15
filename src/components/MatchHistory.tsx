@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Match from './history/Match';
 import useHistoryData from '../hooks/useHistoryData';
 import LoadingScreen from './common/LoadingScreen';
+import { processMatchData } from '../history/processHistoryData';
 
 interface HistoryProps {
     registerRefetch: (fn: () => void) => void;
@@ -49,7 +50,7 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
                     </div>
                 </section>
                 <section className="match-list">
-                    {matches.length > 0 ? matches.map((match) => <Match key={match.matchInfo.matchId} match={match} user={user!} maps={maps}/>)
+                    {matches.length > 0 ? matches.map((match) => <Match key={match.matchInfo.matchId} match={processMatchData(match, user!, maps)}/>)
                     :
                     <div className="no-matches">
                         <h2>No Matches to Display</h2>
