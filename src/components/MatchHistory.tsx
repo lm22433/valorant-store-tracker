@@ -10,7 +10,7 @@ interface HistoryProps {
 const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
 
     const [queueID, setQueueID] = useState<string>("");
-    const { user, matches, isLoading, error, refetch } = useHistoryData(queueID);
+    const { user, matches, maps, isLoading, error, refetch } = useHistoryData(queueID);
     
     registerRefetch(() => refetch);
 
@@ -49,7 +49,7 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
                     </div>
                 </section>
                 <section className="match-list">
-                    {matches.length > 0 ? matches.map((match) => <Match key={match.matchInfo.matchId} match={match} user={user!}/>)
+                    {matches.length > 0 ? matches.map((match) => <Match key={match.matchInfo.matchId} match={match} user={user!} maps={maps}/>)
                     :
                     <div className="no-matches">
                         <h2>No Matches to Display</h2>

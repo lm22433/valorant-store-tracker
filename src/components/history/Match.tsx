@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PlayerInfoResponse, MatchDetailsResponse } from '../../types';
+import { ValorantMap } from '../../history/types';
 
 
 const mapNames: Record<string, string> = {
@@ -21,9 +22,10 @@ const mapNames: Record<string, string> = {
 interface MatchProps {
     match: MatchDetailsResponse;
     user: PlayerInfoResponse;
+    maps: ValorantMap[];
 }
 
-const Match: React.FC<MatchProps> = ({match, user}) => {
+const Match: React.FC<MatchProps> = ({match, user, maps}) => {
 
     const [expanded, setExpanded] = useState<boolean>(false);
 
@@ -32,10 +34,16 @@ const Match: React.FC<MatchProps> = ({match, user}) => {
     const playerTeam = match.teams!.find(team => player.teamId === team.teamId)!;
     // const enemyTeam = match.teams!.find(team => playerTeamId !== team.teamId)!;
 
+    const mapName = mapNames[match.matchInfo.mapId.split("/").pop()!];
+
+    const map = maps.find(map => map.displayName === mapName)!;
+    const icon = <img src={map.listViewIcon}></img>;
+
     return (
         <div className={playerTeam.won ? "match-won" : "match-lost"} onClick={() => setExpanded(!expanded)}>
+            <div className="background">{icon}</div>
             <section className="match-overview">
-                <p>{mapNames[match.matchInfo.mapId.split("/").pop()!]}</p>
+                <p>{mapName}</p>
                 <div className="queue-type">
                     {match.matchInfo.queueID.toLocaleUpperCase()}
                 </div>
