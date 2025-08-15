@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { PlayerInfoResponse, StorefrontResponse } from '../types';
 import { ValorantAPIResponse, ValorantSkin } from '../store/types';
@@ -52,7 +52,10 @@ export const useStoreData = (): UseStoreDataResult => {
 		}
 	}, [fetchSkinData]);
 
+	const fetched = useRef(false);
 	useEffect(() => {
+		if (fetched.current) return;
+		fetched.current = true;
 		fetchData();
 	}, [fetchData]);
 

@@ -1,9 +1,6 @@
-export interface ValorantAPIResponse {
+export interface ValorantAPIMapResponse {
   status: number;
-  data: ValorantMap[];
-}
-
-export interface ValorantMap {
+  data: {
     uuid: string;
     displayName: string;
     narrativeDescription: string;
@@ -29,6 +26,74 @@ export interface ValorantMap {
             y: number;
         }
     }
+  }[]
+}
+
+export interface ValorantAPIAgentResponse {
+    status: number;
+    data: {
+        uuid: string;
+        displayName: string;
+        description: string;
+        developerName: string;
+        releaseDate: Date;
+        characterTags: string[];
+        displayIcon: string;
+        displayIconSmall: string;
+        bustPortrait: string;
+        fullPortrait: string;
+        fullPortraitV2: string;
+        killfeedPortrait: string;
+        background: string;
+        backgroundGradientColors: string[];
+        assetPath: string;
+        isFullPortraitRightFacing: boolean;
+        isPlayableCharacter: boolean;
+        isAvailableForTest: boolean;
+        isBaseContent: boolean;
+        role: {
+            uuid: string;
+            displayName: string;
+            description: string;
+            displayIcon: string;
+            assetPath: string;
+        }
+        recruitmentData: {
+            counterId: string;
+            milestoneId: string;
+            milestoneThreshold: number;
+            useLevelVpCostOverride: boolean;
+            levelVpCostOverride: number;
+            startDate: Date;
+            endDate: Date;
+        }
+        abilities: {
+            slot: string;
+            displayName: string;
+            description: string;
+            displayIcon: string;
+        }[]
+        voiceLine: {
+            minDuration: number;
+            maxDuration: number;
+            mediaList: {
+                id: number;
+                wwise: string;
+                wave: string;
+            }[]
+        }
+    }[]
+}
+
+export interface ValorantMap {
+    displayName: string;
+    listViewIcon: string;
+}
+
+export interface ValorantAgent {
+    uuid: string;
+    displayName: string;
+    displayIcon: string;
 }
 
 export interface PlayerInfo {
@@ -74,7 +139,9 @@ export interface TeamInfo {
 }
 
 export interface MatchInfo {
-    player: string;
+    playerIndex: number;
+    agentName: string;
+    agentIconUrl: string;
     mapName: string;
     mapIconUrl: string;
     gameLengthMillis: number | null;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Match from './history/Match';
 import useHistoryData from '../hooks/useHistoryData';
 import LoadingScreen from './common/LoadingScreen';
@@ -11,9 +11,15 @@ interface HistoryProps {
 const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
 
     const [queueID, setQueueID] = useState<string>("");
-    const { user, matches, maps, isLoading, error, refetch } = useHistoryData(queueID);
+    const { user, matches, maps, agents, isLoading, error, refetch } = useHistoryData(queueID);
     
-    registerRefetch(() => refetch);
+    useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
+
+    const processedMatches = useMemo(() => {
+        if (!matches || !user || !maps.length || !agents.length) return null;
+        return matches.map(match => processMatchData(match, user, maps, agents));
+      }, [matches]);
+    
 
     if (isLoading) return <LoadingScreen message="Loading your matches..." />;
 
@@ -50,7 +56,8 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
                     </div>
                 </section>
                 <section className="match-list">
-                    {matches.length > 0 ? matches.map((match) => <Match key={match.matchInfo.matchId} match={processMatchData(match, user!, maps)}/>)
+                    {processedMatches && processedMatches.length > 0 ?
+                        processedMatches.map((match) => <Match match={match}/>)
                     :
                     <div className="no-matches">
                         <h2>No Matches to Display</h2>

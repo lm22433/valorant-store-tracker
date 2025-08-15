@@ -10,15 +10,16 @@ const Match: React.FC<MatchProps> = ({match}) => {
 
     const [expanded, setExpanded] = useState<boolean>(false);
 
-    // there must be a better way...
-    const player = match.playerInfo.find(player => (player.gameName + player.tagLine) === match.matchInfo.player)!;
+    const player = match.playerInfo[match.matchInfo.playerIndex];
     const playerTeam = match.teamInfo!.find(team => player.teamId === team.teamId)!;
 
-    const icon = <img src={match.matchInfo.mapIconUrl}></img>;
+    const mapIcon = <img src={match.matchInfo.mapIconUrl}></img>;
+    const agentIcon = <img src={match.matchInfo.agentIconUrl}></img>;
 
     return (
         <div className={playerTeam.won ? "match-won" : "match-lost"} onClick={() => setExpanded(!expanded)}>
-            <div className="background">{icon}</div>
+            <div className="background">{mapIcon}</div>
+            <div className="agent">{agentIcon}</div>
             <section className="match-overview">
                 <p>{match.matchInfo.mapName}</p>
                 <div className="queue-type">

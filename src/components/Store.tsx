@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import useStoreData from '../hooks/useStoreData';
 import useTimer from '../hooks/useTimer';
 import LoadingScreen from './common/LoadingScreen';
@@ -13,7 +13,7 @@ interface StoreProps {
 const Store: React.FC<StoreProps> = ({ registerRefetch }) => {
   const { store, skinData, isLoading, error, refetch } = useStoreData();
 
-  registerRefetch(() => refetch);
+  useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
   const processedStore = useMemo(() => {
     if (!store || !skinData.length) return null;
