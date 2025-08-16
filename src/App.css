@@ -353,14 +353,19 @@ body {
   text-align: center;
 }
 
-.score {
-  margin-right: 0;
-  margin-left: auto;
+.result {
+  width: 5ch;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.map-name {
-  margin-right: auto;
-  margin-left: 0; 
+.result-colon {
+  margin: 0 0.2rem;
+}
+
+.left-margin {
+  margin-left: 1rem;
 }
 
 

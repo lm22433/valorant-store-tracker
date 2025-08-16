@@ -16,6 +16,8 @@ const Match: React.FC<MatchProps> = ({match}) => {
     const mapIcon = <img src={match.matchInfo.mapIconUrl}></img>;
     const agentIcon = <img src={match.matchInfo.agentIconUrl}></img>;
 
+    const kda = player.stats?.kills.toString() + "/" + player.stats?.deaths.toString() + "/" + player.stats?.assists.toString();
+
     return (
         <div className={playerTeam.won ? "match-won" : "match-lost"} onClick={() => setExpanded(!expanded)}>
             <div className="background">{mapIcon}</div>
@@ -25,9 +27,15 @@ const Match: React.FC<MatchProps> = ({match}) => {
                 <div className="queue-type">
                     {match.matchInfo.queueID.toLocaleUpperCase()}
                 </div>
-                <div style={{width: "10rem", display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
-                    <p>ACS: {Math.round(player.stats!.score / playerTeam.roundsPlayed)}</p>
-                    <p>{match.teamInfo![0].roundsWon} : {match.teamInfo![1].roundsWon}</p>
+                <div style={{display: "flex", alignItems: 'center'}}>
+                    <p>{kda}</p>
+                    <p className="left-margin">#{match.matchInfo.playerIndex + 1}</p>
+                    <p className="left-margin">{Math.round(player.stats!.score / playerTeam.roundsPlayed)}</p>
+                    <p className="result left-margin">
+                        <span>{match.teamInfo![0].roundsWon}</span>
+                        <span className="result-colon">:</span>
+                        <span>{match.teamInfo![1].roundsWon}</span>
+                    </p>
                 </div>
             </section>
             {expanded ?

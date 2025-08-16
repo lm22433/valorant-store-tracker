@@ -25,7 +25,7 @@ export const processMatchData = (
   agents: ValorantAgent[]
 ): ProcessedMatchData => {
     
-    const playerInfo: PlayerInfo[] = matchResponse.players.map(player => ({
+    let playerInfo: PlayerInfo[] = matchResponse.players.map(player => ({
         subject: player.subject,
         gameName: player.gameName,
         tagLine: player.tagLine,
@@ -37,6 +37,8 @@ export const processMatchData = (
         competitiveTier: player.competitiveTier,
         accountLevel: player.accountLevel,
     }));
+
+    playerInfo = playerInfo.sort((b,a) => a.stats && b.stats ? a.stats.score - b.stats.score : 1);
 
     const teamInfo: TeamInfo[] = matchResponse.teams!;
     const mapName = mapNames[matchResponse.matchInfo.mapId.split("/").pop()!];
