@@ -19,7 +19,25 @@ body {
   flex-direction: column;
 }
 
-/* Login Screen */
+.home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+
+/* ~~~~~~~~~~~~ */
+/* LOGIN SCREEN */
+/* ~~~~~~~~~~~~ */
+
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -85,7 +103,11 @@ body {
   font-size: 1.2rem;
 }
 
-/* Loading Screen */
+
+/* ~~~~~~~~~~~~~~ */
+/* LOADING SCREEN */
+/* ~~~~~~~~~~~~~~ */
+
 .loading-screen {
   min-height: 100vh;
   display: flex;
@@ -122,22 +144,11 @@ body {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Home Layout */
-.home {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
 
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-}
+/* ~~~~~~ */
+/* HEADER */
+/* ~~~~~~ */
 
-/* Header */
 .header {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
@@ -218,62 +229,220 @@ body {
   transform: rotate(180deg);
 }
 
-/* Countdown Section */
-.countdown-section {
-  margin-bottom: 3rem;
+
+/* ~~~~~~~~~ */
+/* HOME PAGE */
+/* ~~~~~~~~~ */
+
+.button-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-.countdown-card {
-  background: rgba(255, 255, 255, 0.03);
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #ff4655 0%, #ff6b35 100%);
+  padding: 0.75rem 1.5rem;
+  margin: 0 0.5rem;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  font-size: 40px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  filter: brightness(1.5);
+}
+
+
+/* ~~~~~~~~~~~~~ */
+/* MATCH DETAILS */
+/* ~~~~~~~~~~~~~ */
+
+.match-won {
+  cursor: pointer;
+  font-size: larger;
+  font-weight: 600;
+  color: rgba(137, 255, 186, 1);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 2.5rem;
+  border-radius: 10px;
+  min-height: 4rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.match-lost {
+  cursor: pointer;
+  font-size: larger;
+  font-weight: 600;
+  color: rgba(255, 126, 164, 1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  min-height: 4rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.background {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 0;
+}
+
+.background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.3;
+}
+
+.agent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 20rem;
+  z-index: 0;
+}
+
+.agent img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.match-overview {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.match-details {
+  text-align: right;
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+}
+
+.queue-type {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
 }
 
-.countdown-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.countdown-subtitle {
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 2rem;
-}
-
-.countdown-display {
+.result {
+  width: 5ch;
   display: flex;
   justify-content: center;
-  gap: 2rem;
-}
-
-.time-unit {
-  display: flex;
-  flex-direction: column;
   align-items: center;
 }
 
-.time-number {
-  font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1;
+.result-colon {
+  margin: 0 0.2rem;
+}
+
+.left-margin {
+  margin-left: 1rem;
+}
+
+
+/* ~~~~~~~~~~~~~ */
+/* MATCH HISTORY */
+/* ~~~~~~~~~~~~~ */
+
+.no-matches {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+
+.history-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-top-row h1 {
+  font-size: xx-large;
+}
+
+.match-filter {
+  position: relative;
+}
+
+.match-filter select {
+  display: inline-flex;
+  align-items: center;
+  min-width: 10rem;
   background: linear-gradient(135deg, #ff4655 0%, #ff6b35 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.time-label {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.5);
+  padding: 0.75rem 1rem;
+  margin: 0 0.5rem;
+  border-radius: 12px;
+  border: none;
   font-weight: 500;
-  margin-top: 0.5rem;
-  letter-spacing: 0.5px;
+  font-size: 1rem;
+  color: white;
+  transition: all 0.3s ease;
+  appearance: none;
+  cursor: pointer;
 }
 
-/* Store Section */
+.match-filter::before,
+.match-filter::after {
+  --size: 0.4rem;
+  position: absolute;
+  content: "";
+  right: 1.2rem;
+  pointer-events: none;
+}
+
+.match-filter::before {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-bottom: var(--size) solid white;
+  top: 32%;
+}
+
+.match-filter::after {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-top: var(--size) solid white;
+  top: 58%;
+}
+
+.match-filter select:hover {
+  background: linear-gradient(135deg, #ff626f 0%, #ff7b4b 100%);
+}
+
+
+/* ~~~~~~~~~~~~~ */
+/* STORE SECTION */
+/* ~~~~~~~~~~~~~ */
+
 .store-section {
   margin-bottom: 2rem;
 }
@@ -429,6 +598,61 @@ body {
 .placeholder-line.short {
   width: 60%;
   margin: 0 auto;
+}
+
+/* Countdown Section */
+.countdown-section {
+  margin-bottom: 3rem;
+}
+
+.countdown-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.countdown-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.countdown-subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2rem;
+}
+
+.countdown-display {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.time-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, #ff4655 0%, #ff6b35 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.time-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  margin-top: 0.5rem;
+  letter-spacing: 0.5px;
 }
 
 /* Responsive Design */

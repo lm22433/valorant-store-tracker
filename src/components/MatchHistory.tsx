@@ -1,16 +1,25 @@
-import React, {useCallback} from 'react';
-import Matches from './history/Matches';
+import React, { useState, useEffect, useMemo } from 'react';
+import Match from './history/Match';
 import useHistoryData from '../hooks/useHistoryData';
 import LoadingScreen from './common/LoadingScreen';
-import Header from './store/Header';
+import { processMatchData } from '../history/processHistoryData';
 
-const History: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) => {
+interface HistoryProps {
+    registerRefetch: (fn: () => void) => void;
+}
 
-    const { user, history, isLoading, error, refetch } = useHistoryData();
+const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
 
-    const handleRefresh = useCallback(() => {
-        refetch();
-    }, [refetch]);
+    const [queueID, setQueueID] = useState<string>("");
+    const { user, matches, maps, agents, isLoading, error, refetch } = useHistoryData(queueID);
+    
+    useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
+
+    const processedMatches = useMemo(() => {
+        if (!matches || !user || !maps.length || !agents.length) return null;
+        return matches.map(match => processMatchData(match, user, maps, agents));
+      }, [matches]);
+    
 
     if (isLoading) return <LoadingScreen message="Loading your matches..." />;
 
@@ -20,7 +29,7 @@ const History: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void})
             <div className="error-card">
             <h2>Something went wrong</h2>
                 <p>{error}</p>
-            <button onClick={handleRefresh} className="retry-button">Try Again</button>
+            <button onClick={refetch} className="retry-button">Try Again</button>
             </div>
         </div>
         );
@@ -28,10 +37,32 @@ const History: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void})
 
     return (
         <div className="home">
-            <Header user={user} onRefresh={handleRefresh} onHome={onHome} />
             <main className="main-content">
-                <h1>Match History</h1>
-                <Matches ids={history!.History}/>
+                <section className="history-top-row">
+                    <h1>Match History</h1>
+                    <div className="match-filter">
+                        <select 
+                            name="queueId"
+                            value={queueID}
+                            onChange={e => {setQueueID(e.target.value);}}
+                        >
+                            <option value="">All</option>
+                            <option value="unrated">Unrated</option>
+                            <option value="competitive">Competitive</option>
+                            <option value="deathmatch">Deathmatch</option>
+                            <option value="spikerush">Spike Rush</option>
+                            <option value="swiftplay">Swiftplay</option>
+                        </select>
+                    </div>
+                </section>
+                <section className="match-list">
+                    {processedMatches && processedMatches.length > 0 ?
+                        processedMatches.map((match) => <Match match={match}/>)
+                    :
+                    <div className="no-matches">
+                        <h2>No Matches to Display</h2>
+                    </div>}
+                </section>
             </main>
         </div>
     );
