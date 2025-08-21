@@ -170,7 +170,7 @@ body {
   font-size: 1.2rem;
   font-weight: 700;
   color: white;
-}
+  }
 
 .user-details {
   display: flex;
@@ -202,15 +202,15 @@ body {
 }
 
 .home-button {
-    width: 44px;
-    height: 44px;
-    margin-left: 10px;
-    border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  margin-left: 10px;
+  border-radius: 12px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    font-size: 1.4rem;
-    cursor: pointer;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
 }
 
 .refresh-button:hover {
@@ -483,28 +483,28 @@ body {
   .main-content {
     padding: 1rem;
   }
-  
+
   .header-content {
     padding: 0;
   }
-  
+
   .countdown-display {
     gap: 1rem;
   }
-  
+
   .time-number {
     font-size: 2rem;
   }
-  
+
   .store-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .currency-grid {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .app-title {
     font-size: 2rem;
   }
@@ -514,16 +514,181 @@ body {
   .login-card {
     padding: 2rem 1.5rem;
   }
-  
+
   .countdown-card {
     padding: 2rem 1.5rem;
   }
-  
+
   .time-number {
     font-size: 1.5rem;
   }
-  
+
   .currency-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+.home-landing {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2.5rem 3rem;
+}
+
+.landing-inner {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+.landing-headline {
+  max-width: 780px;
+}
+
+.landing-title {
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(125deg, #fff 0%, #d8d8e3 40%, #ffb3bd 80%);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 1rem;
+  background-clip: text;
+}
+
+.landing-sub {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.25px;
+}
+
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.nav-card {
+  position: relative;
+  overflow: hidden;
+  border: none;
+  text-align: left;
+  padding: 2.1rem 1.9rem 2.2rem;
+  border-radius: 28px;
+  cursor: pointer;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04) 60%);
+  backdrop-filter: blur(26px) saturate(170%);
+  color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  box-shadow: 0 4px 18px -4px rgba(0, 0, 0, 0.5), 0 18px 40px -14px rgba(0, 0, 0, 0.55);
+  transition: 0.65s cubic-bezier(0.19, 1, 0.22, 1);
+  isolation: isolate;
+}
+
+.nav-card:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(140deg, rgba(255, 70, 85, 0.55), rgba(255, 255, 255, 0.05), rgba(255, 107, 53, 0.45));
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  transition: var(--transition);
+}
+
+.nav-card-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 120% 120%, rgba(255, 70, 85, 0.45), transparent 60%);
+  opacity: 0;
+  transition: 1s ease;
+}
+
+.nav-card:hover {
+  transform: translateY(-10px) scale(1.015);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.55), 0 32px 60px -18px rgba(0, 0, 0, 0.6);
+}
+
+.nav-card:hover:before {
+  opacity: 0.28;
+}
+
+.nav-card:hover .nav-card-bg {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.nav-card-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.nav-icon {
+  font-size: 2.3rem;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
+}
+
+.nav-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.nav-desc {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  max-width: 22ch;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.nav-arrow {
+  position: absolute;
+  top: 1.4rem;
+  right: 1.4rem;
+  font-size: 1.4rem;
+  opacity: 0.35;
+  transition: var(--transition);
+  z-index: 2;
+}
+
+.nav-card:hover .nav-arrow {
+  opacity: 0.9;
+  transform: translateX(6px);
+}
+
+@media (max-width: 900px) {
+  .landing-inner {
+    gap: 2.5rem;
+  }
+
+  .nav-grid {
+    gap: 1.4rem;
+  }
+
+  .nav-card {
+    padding: 1.9rem 1.6rem 2rem;
+    border-radius: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-landing {
+    padding: 3.5rem 1.1rem 2.5rem;
+  }
+
+  .landing-title {
+    font-size: 2.4rem;
   }
 }
