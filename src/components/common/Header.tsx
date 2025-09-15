@@ -20,7 +20,7 @@ const Header: React.FC<Props> = ({ user, onRefresh, onHome }) => (
         </div>
       </div>
       <div className="header-actions">
-        <button className="refresh-button" onClick={onRefresh} title="Refresh Store">
+        <button className="refresh-button" onClick={onRefresh} title="Refresh">
           ↻
         </button>
         <button className="home-button" onClick={onHome} title="Home">
