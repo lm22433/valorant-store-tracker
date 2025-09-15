@@ -12,8 +12,23 @@ pub fn storefront_url(shard: &str, puuid: &str) -> String {
 
 #[inline]
 pub fn match_history_url(shard: &str, puuid: &str, start_index: &str, end_index: &str, queue: &str) -> String {
+	if queue.eq("") || queue.eq(" ") {
+		return format!(
+			"https://pd.{}.a.pvp.net/match-history/v1/history/{}?startIndex={}&endIndex={}",
+			shard, puuid, start_index, end_index
+		);
+	}
+
 	format!(
 		"https://pd.{}.a.pvp.net/match-history/v1/history/{}?startIndex={}&endIndex={}&queue={}",
 		shard, puuid, start_index, end_index, queue
+	)
+}
+
+#[inline]
+pub fn match_details_url(shard: &str, match_id: &str) -> String {
+	format!(
+		"https://pd.{}.a.pvp.net/match-details/v1/matches/{}",
+		shard, match_id
 	)
 }
