@@ -63,7 +63,7 @@ const Home: React.FC = () => {
                     case Content.Store:
                         return <Store registerRefetch={setActiveContentRefetch}/>;
                     case Content.Live:
-                        return <Live/>;
+                        return <Live registerRefetch={setActiveContentRefetch}/>;
                     case Content.History:
                         return <History registerRefetch={setActiveContentRefetch}/>;
                     default:

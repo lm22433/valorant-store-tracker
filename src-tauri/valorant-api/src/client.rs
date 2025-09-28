@@ -1,7 +1,7 @@
-use crate::endpoints::{match_history_url, match_details_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
+use crate::endpoints::{match_history_url, match_details_url, current_match_player_url, current_match_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
 use crate::errors::ValorantApiError;
 use crate::http::HttpClient;
-use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse, MatchDetailsResponse};
+use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse, MatchDetailsResponse, CurrentMatchPlayerResponse, CurrentMatchResponse};
 
 pub struct ValorantApiClient<C: HttpClient> {
     http_client: C,
@@ -77,6 +77,58 @@ impl<C: HttpClient> ValorantApiClient<C> {
             .await?;
 
         let body = resp.json::<MatchDetailsResponse>()?;
+        Ok(body)
+    }
+
+    pub async fn get_current_match_player(
+        &self,
+        region: &str,
+        shard: &str,
+        puuid: &str,
+        client_platform: &str,
+        client_version: &str,
+        entitlement_token: &str,
+        auth_token: &str,
+    ) -> Result<CurrentMatchPlayerResponse, ValorantApiError> {
+        let url = current_match_player_url(region, shard, puuid);
+
+        let resp = self.http_client
+            .get(&url)
+            .bearer_auth(auth_token)
+            .header("X-Riot-ClientPlatform", client_platform)
+            .header("X-Riot-ClientVersion", client_version)
+            .header("X-Riot-Entitlements-JWT", entitlement_token)
+            .json(&serde_json::json!({}))
+            .send()
+            .await?;
+
+        let body = resp.json::<CurrentMatchPlayerResponse>()?;
+        Ok(body)
+    }
+
+    pub async fn get_current_match(
+        &self,
+        region: &str,
+        shard: &str,
+        match_id: &str,
+        client_platform: &str,
+        client_version: &str,
+        entitlement_token: &str,
+        auth_token: &str,
+    ) -> Result<CurrentMatchResponse, ValorantApiError> {
+        let url = current_match_url(region, shard, match_id);
+
+        let resp = self.http_client
+            .get(&url)
+            .bearer_auth(auth_token)
+            .header("X-Riot-ClientPlatform", client_platform)
+            .header("X-Riot-ClientVersion", client_version)
+            .header("X-Riot-Entitlements-JWT", entitlement_token)
+            .json(&serde_json::json!({}))
+            .send()
+            .await?;
+
+        let body = resp.json::<CurrentMatchResponse>()?;
         Ok(body)
     }
 

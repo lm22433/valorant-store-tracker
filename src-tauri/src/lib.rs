@@ -2,10 +2,12 @@ mod auth;
 mod store;
 mod helpers;
 mod history;
+mod live;
 
 use crate::auth::*;
 use crate::store::*;
 use crate::history::*;
+use crate::live::*;
 use valorant_api::client::ValorantApiClient;
 use valorant_api::http::reqwest::ReqwestHttpClient;
 
@@ -25,6 +27,7 @@ pub fn run() {
             get_store_data,
             get_history_data,
             get_match_data,
+            get_current_match,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
