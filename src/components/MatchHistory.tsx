@@ -50,7 +50,7 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
                                 name="queueId"
                                 value={queueID}
                                 onChange={e => {setQueueID(e.target.value);}}
-                                className="appearance-none rounded-2xl bg-gradient-to-r from-[#ff4655] to-[#ff6b35] px-5 py-3 pr-12 text-sm font-semibold uppercase tracking-widest text-white shadow-[0_15px_35px_rgba(255,70,85,0.35)] transition focus:outline-none focus:ring-2 focus:ring-white/40"
+                                className="appearance-none rounded-xl border border-white/10 bg-black/30 px-5 py-3 pr-12 text-xs font-semibold uppercase tracking-[0.4em] text-white transition focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/40"
                             >
                                 <option value="">All</option>
                                 <option value="unrated">Unrated</option>
@@ -59,7 +59,7 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
                                 <option value="spikerush">Spike Rush</option>
                                 <option value="swiftplay">Swiftplay</option>
                             </select>
-                            <span className="pointer-events-none absolute right-4 text-lg text-white/80">⌄</span>
+                            <span className="pointer-events-none absolute right-4 text-sm text-white/70">▾</span>
                         </div>
                     </div>
                 </section>
