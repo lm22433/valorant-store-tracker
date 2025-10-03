@@ -36,31 +36,47 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
     }
 
     return (
-        <div className="home">
-            <main className="main-content">
-                <section className="history-top-row">
-                    <h1>Match History</h1>
-                    <div className="match-filter">
-                        <select 
-                            name="queueId"
-                            value={queueID}
-                            onChange={e => {setQueueID(e.target.value);}}
-                        >
-                            <option value="">All</option>
-                            <option value="unrated">Unrated</option>
-                            <option value="competitive">Competitive</option>
-                            <option value="deathmatch">Deathmatch</option>
-                            <option value="spikerush">Spike Rush</option>
-                            <option value="swiftplay">Swiftplay</option>
-                        </select>
+        <div className="flex min-h-screen flex-col">
+            <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-10 px-4 py-10 sm:px-8 lg:px-12">
+                <section className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                    <div className="space-y-2">
+                        <h1 className="text-3xl font-semibold text-white sm:text-4xl">Match History</h1>
+                        <p className="text-sm text-white/60">Dive into your recent performances and track momentum across queues.</p>
+                    </div>
+                    <div className="flex flex-col gap-2 text-sm font-medium text-white/70 md:flex-row md:items-center md:gap-4">
+                        <span className="uppercase tracking-[0.3em] text-xs text-white/50 md:text-right">Queue</span>
+                        <div className="relative inline-flex items-center">
+                            <select
+                                name="queueId"
+                                value={queueID}
+                                onChange={e => {setQueueID(e.target.value);}}
+                                className="appearance-none rounded-2xl bg-gradient-to-r from-[#ff4655] to-[#ff6b35] px-5 py-3 pr-12 text-sm font-semibold uppercase tracking-widest text-white shadow-[0_15px_35px_rgba(255,70,85,0.35)] transition focus:outline-none focus:ring-2 focus:ring-white/40"
+                            >
+                                <option value="">All</option>
+                                <option value="unrated">Unrated</option>
+                                <option value="competitive">Competitive</option>
+                                <option value="deathmatch">Deathmatch</option>
+                                <option value="spikerush">Spike Rush</option>
+                                <option value="swiftplay">Swiftplay</option>
+                            </select>
+                            <span className="pointer-events-none absolute right-4 text-lg text-white/80">⌄</span>
+                        </div>
                     </div>
                 </section>
-                <section className="match-list">
+                <section className="flex flex-col gap-6">
                     {processedMatches && processedMatches.length > 0 ?
-                        processedMatches.map((match) => <Match match={match}/>)
+                        processedMatches.map((match) => (
+                            <Match
+                                key={`${match.matchInfo.gameStartMillis}-${match.matchInfo.queueID}`}
+                                match={match}
+                            />
+                        ))
                     :
-                    <div className="no-matches">
-                        <h2>No Matches to Display</h2>
+                    <div className="flex h-[60vh] items-center justify-center rounded-3xl border border-dashed border-white/15 bg-white/5 text-center backdrop-blur-xl">
+                        <div className="space-y-2">
+                            <h2 className="text-2xl font-semibold text-white">No Matches to Display</h2>
+                            <p className="text-sm text-white/60">Play a few games to populate your history.</p>
+                        </div>
                     </div>}
                 </section>
             </main>
