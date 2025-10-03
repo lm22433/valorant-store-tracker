@@ -8,7 +8,7 @@ interface Props {
 }
 
 const StoreItems: React.FC<Props> = ({ items }) => (
-  <div className="store-grid">
+  <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
     {items.length > 0 ? (
       items.map((item, index) => (
         <StoreItemCard key={item.uuid || index} item={item} />
