@@ -1,14 +1,19 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import useStoreData from '../hooks/useStoreData';
 import useTimer from '../hooks/useTimer';
 import LoadingScreen from './common/LoadingScreen';
-import Header from './store/Header';
 import StoreCountdown from './store/StoreCountdown';
 import StoreItems from './store/StoreItems';
 import { processStoreData } from '../store/processStoreData';
 
-const Store: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) => {
-  const { user, store, skinData, isLoading, error, refetch } = useStoreData();
+interface StoreProps {
+    registerRefetch: (fn: () => void) => void;
+}
+
+const Store: React.FC<StoreProps> = ({ registerRefetch }) => {
+  const { store, skinData, isLoading, error, refetch } = useStoreData();
+
+  useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
   const processedStore = useMemo(() => {
     if (!store || !skinData.length) return null;
@@ -16,10 +21,6 @@ const Store: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) =
   }, [store, skinData]);
 
   const timeRemaining = useTimer(processedStore?.timeUntilReset || 0);
-
-  const handleRefresh = useCallback(() => {
-    refetch();
-  }, [refetch]);
 
   if (isLoading) return <LoadingScreen message="Loading your store..." />;
 
@@ -30,7 +31,7 @@ const Store: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) =
           <h2 className="text-2xl font-semibold text-white">Something went wrong</h2>
           <p className="mt-3 text-white/70">{error}</p>
           <button
-            onClick={handleRefresh}
+            onClick={refetch}
             className="mt-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-[#ff4655] to-[#ff6b35] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(255,70,85,0.3)] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/60 focus:ring-offset-2 focus:ring-offset-transparent"
           >
             Try Again
@@ -42,7 +43,6 @@ const Store: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) =
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header user={user} onRefresh={handleRefresh} onHome={onHome} />
       <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-12 px-4 py-10 sm:px-8">
         <StoreCountdown timeRemaining={timeRemaining} />
         <section className="space-y-8">

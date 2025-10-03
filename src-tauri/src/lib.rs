@@ -24,6 +24,7 @@ pub fn run() {
             get_account_info_command,
             get_store_data,
             get_history_data,
+            get_match_data,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

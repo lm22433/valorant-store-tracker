@@ -1,10 +1,9 @@
 import React from 'react';
 
-const Live: React.FC<{onHome: () => void}> = ({onHome}: {onHome: () => void}) => {
+const Live: React.FC = () => {
     return (
         <div>
             <h1>Live Match</h1>
-            <button onClick={() => onHome()}>Home</button>            
         </div>
     );
 }

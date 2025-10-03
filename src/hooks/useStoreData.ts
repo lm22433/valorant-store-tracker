@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { PlayerInfoResponse, StorefrontResponse } from '../types';
 import { ValorantAPIResponse, ValorantSkin } from '../store/types';
@@ -45,14 +45,17 @@ export const useStoreData = (): UseStoreDataResult => {
 			setStore(storeResponse);
 			setSkinData(skins);
 		} catch (error) {
-			console.error('Failed to fetch data:', error);
-			setError(error instanceof Error ? error.message : 'Failed to fetch data');
+			console.error('Failed to fetch store data:', error);
+			setError(error instanceof Error ? error.message : typeof(error) === 'string' ? error : 'Failed to fetch store data');
 		} finally {
 			setIsLoading(false);
 		}
 	}, [fetchSkinData]);
 
+	const fetched = useRef(false);
 	useEffect(() => {
+		if (fetched.current) return;
+		fetched.current = true;
 		fetchData();
 	}, [fetchData]);
 
