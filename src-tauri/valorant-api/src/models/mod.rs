@@ -398,10 +398,13 @@ pub struct MatchID {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CurrentMatchPlayerResponse {
     /// Player UUID
+    #[serde(rename = "Subject")]
     pub subject: String,
     /// Pre-Game Match ID
+    #[serde(rename = "MatchID")]
     pub match_id: String,
-    pub version: i32,
+    #[serde(rename = "Version")]
+    pub version: u64,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -410,7 +413,7 @@ pub struct CurrentMatchResponse {
     #[serde(rename = "MatchID")]
     pub match_id: String,
     #[serde(rename = "Version")]
-    pub version: i32,
+    pub version: u64,
     #[serde(rename = "State")]
     pub state: String, // "IN_PROGRESS"
     /// Map ID
@@ -453,11 +456,11 @@ pub struct ConnectionDetails {
     #[serde(rename = "GameServerHost")]
     pub game_server_host: String,
     #[serde(rename = "GameServerPort")]
-    pub game_server_port: i32,
+    pub game_server_port: i64,
     #[serde(rename = "GameServerObfuscatedIP")]
-    pub game_server_obfuscated_ip: i32,
+    pub game_server_obfuscated_ip: i64,
     #[serde(rename = "GameClientHash")]
-    pub game_client_hash: i32,
+    pub game_client_hash: i64,
     #[serde(rename = "PlayerKey")]
     pub player_key: String,
 }

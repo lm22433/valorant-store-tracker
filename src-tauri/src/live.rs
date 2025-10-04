@@ -32,8 +32,6 @@ pub async fn get_current_match(app: tauri::AppHandle) -> Result<CurrentMatchResp
         .await
         .map_err(|e| e.to_string())?;
 
-    println!("{}", current_match_player.match_id);
-
     let match_id = current_match_player.match_id;
 
     let current_match: CurrentMatchResponse = api

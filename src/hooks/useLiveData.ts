@@ -34,6 +34,13 @@ export const useHistoryData = (): UseLiveDataResult => {
 		}
 	}, []);
 
+	const fetched = useRef(false);
+	useEffect(() => {
+		if (fetched.current) return;
+		fetched.current = true;
+		fetchData();
+	}, [fetchData]);
+
 	return { user, match, isLoading, error, refetch: fetchData };
 };
 
