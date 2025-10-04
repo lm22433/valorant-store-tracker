@@ -10,7 +10,7 @@ interface UseLiveDataResult {
 	refetch: () => void;
 }
 
-export const useHistoryData = (): UseLiveDataResult => {
+export const useLiveData = (): UseLiveDataResult => {
 	const [user, setUser] = useState<PlayerInfoResponse | null>(null);
     const [match, setMatch] = useState<CurrentMatchResponse | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -44,4 +44,4 @@ export const useHistoryData = (): UseLiveDataResult => {
 	return { user, match, isLoading, error, refetch: fetchData };
 };
 
-export default useHistoryData;
+export default useLiveData;
