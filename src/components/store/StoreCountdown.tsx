@@ -13,19 +13,21 @@ const StoreCountdown: React.FC<Props> = ({ timeRemaining }) => {
   }, [timeRemaining]);
 
   return (
-    <section className="countdown-section">
-      <div className="countdown-card">
-        <div className="countdown-content">
-          <h3 className="countdown-title">Store Rotation</h3>
-          <p className="countdown-subtitle">Next refresh in</p>
-          <div className="countdown-display">
-            {timeUnits.map((unit, index) => (
-              <div key={index} className="time-unit">
-                <span className="time-number">{unit.value}</span>
-                <span className="time-label">{unit.label}</span>
-              </div>
-            ))}
-          </div>
+  <section>
+      <div className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center backdrop-blur-2xl">
+        <h3 className="text-xl font-semibold text-white">Store Rotation</h3>
+        <p className="mt-2 text-white/60">Next refresh in</p>
+        <div className="mt-8 flex justify-center gap-8 md:gap-12">
+          {timeUnits.map((unit, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <span className="bg-gradient-to-r from-[#ff4655] to-[#ff6b35] bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
+                {unit.value}
+              </span>
+              <span className="mt-2 text-xs font-medium tracking-[0.3em] text-white/50">
+                {unit.label}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </section>

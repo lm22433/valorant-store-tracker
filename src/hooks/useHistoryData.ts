@@ -32,7 +32,7 @@ export const useHistoryData = (queueId: string): UseHistoryDataResult => {
 			const data: ValorantAPIMapResponse = await response.json();
 			if (data.status === 200) return (data.data.map(map => ({
 				displayName: map.displayName,
-				listViewIcon: map.listViewIcon
+				listViewIcon: map.splash
 			})));
 			throw new Error(`API returned status ${data.status}`);
 		} catch (error) {
