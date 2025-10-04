@@ -809,8 +809,6 @@ pub struct Kill {
     pub round: i64,
 }
 
-*/
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct WalletResponse {
     #[serde(rename = "Balances")]
