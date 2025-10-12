@@ -107,6 +107,8 @@ export interface ProcessedStoreItem {
   displayIcon: string;
   cost: number;
   category: string;
+  // Currency label to display (e.g., 'VP' or 'KC')
+  currencyLabel?: string;
   skinData?: ValorantWeaponSkin;
   // Night Market / discount fields
   originalCost?: number;

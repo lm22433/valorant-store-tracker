@@ -60,12 +60,19 @@ export const processStoreData = (
         }
       }
     }
-    const cost = offer.Cost?.[VP] ?? 0;
+    const cost = offer.Cost?.[VP] ?? offer.Cost?.[KC] ?? 0;
+    let currencyLabel: string | undefined = undefined;
+    if (offer.Cost?.[VP]) {
+      currencyLabel = 'VP';
+    } else if (offer.Cost?.[KC]) {
+      currencyLabel = 'KC';
+    }
     return {
       uuid: matchedSkin?.uuid || offer.OfferID,
       displayName: matchedSkin?.displayName || 'Unknown Skin',
       displayIcon: matchedSkin?.displayIcon || '',
       cost,
+      currencyLabel,
       category: 'Weapon Skin',
       skinData: matchedSkin
     };
@@ -78,7 +85,13 @@ export const processStoreData = (
       const reward = offer.Rewards?.[0];
       if (!reward) return;
 
-      const cost = offer.Cost?.[VP] ?? offer.Cost?.[KC] ?? 0;
+  const cost = offer.Cost?.[VP] ?? offer.Cost?.[KC] ?? 0;
+      let currencyLabel: string | undefined = undefined;
+      if (offer.Cost?.[VP]) {
+        currencyLabel = 'VP';
+      } else if (offer.Cost?.[KC]) {
+        currencyLabel = 'KC';
+      }
 
       // Determine accessory type and try to find a matching metadata object
       console.log('Accessory offer:', reward.ItemTypeID);
@@ -139,6 +152,7 @@ export const processStoreData = (
         displayName,
         displayIcon,
         cost,
+        currencyLabel,
         category: itemTypeLabel,
         skinData,
       });
@@ -153,15 +167,22 @@ export const processStoreData = (
       const reward = bonusOffer.Offer.Rewards?.[0];
       if (!reward) return;
       const matchedSkin = skinMap.get(reward.ItemID) || levelToSkinMap.get(reward.ItemID);
-      const discounted = bonusOffer.DiscountCosts?.[VP];
-      const baseCost = bonusOffer.Offer.Cost?.[VP];
-      const cost = (discounted ?? baseCost ?? 0);
+  const discounted = bonusOffer.DiscountCosts?.[VP];
+  const baseCost = bonusOffer.Offer.Cost?.[VP] ?? bonusOffer.Offer.Cost?.[KC];
+  const cost = (discounted ?? baseCost ?? 0);
+      let currencyLabel: string | undefined = undefined;
+      if (bonusOffer.Offer.Cost?.[VP]) {
+        currencyLabel = 'VP';
+      } else if (bonusOffer.Offer.Cost?.[KC]) {
+        currencyLabel = 'KC';
+      }
       const discountPercent = bonusOffer.DiscountPercent;
       nightMarketItems.push({
         uuid: reward.ItemID,
         displayName: matchedSkin?.displayName || 'Unknown Skin',
         displayIcon: matchedSkin?.displayIcon || '',
         cost,
+        currencyLabel,
         category: 'Weapon Skin (Discount)',
         skinData: matchedSkin,
         originalCost: baseCost,

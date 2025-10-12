@@ -34,7 +34,7 @@ const StoreItemCard: React.FC<{ item: ProcessedStoreItem }> = ({ item }) => {
             {item.category}
           </p>
           <div className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#ff4655] to-[#ff6b35] px-6 py-3 font-semibold text-white">
-            <span className="text-sm uppercase opacity-90">VP</span>
+            <span className="text-sm uppercase opacity-90">{item.currencyLabel || 'VP'}</span>
             <span className="text-base">{item.cost.toLocaleString()}</span>
           </div>
         </div>
