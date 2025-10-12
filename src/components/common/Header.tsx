@@ -64,7 +64,7 @@ const Header: React.FC<Props> = ({ user, onRefresh, onHome, onLogout }) => {
       </header>
 
       {showLogoutConfirm && ReactDOM.createPortal(
-        <div className="fixed inset-0 z-50" role="dialog" aria-modal>
+        <div className="fixed inset-0 z-50" role="dialog" aria-modal='true'>
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowLogoutConfirm(false)} />
           <div className="absolute inset-0 flex items-center justify-center p-4">
             <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/10 p-5 text-white backdrop-blur-md shadow-2xl">

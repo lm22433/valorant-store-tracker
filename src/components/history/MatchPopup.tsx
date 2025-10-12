@@ -16,9 +16,13 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
             if (e.key === 'Escape') onClose();
         };
         window.addEventListener('keydown', onKey);
-        // trigger enter animation on mount
-    requestAnimationFrame(() => setVisible(true));
-        return () => window.removeEventListener('keydown', onKey);
+        requestAnimationFrame(() => setVisible(true));
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            window.removeEventListener('keydown', onKey);
+            document.body.style.overflow = prevOverflow;
+        };
     }, [isOpen, onClose]);
 
     if (!isOpen) return null;
@@ -70,13 +74,14 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
     };
 
     return ReactDOM.createPortal(
-        <div className="fixed inset-0 z-50" role="dialog" aria-modal>
+        <div className="fixed inset-0 z-50" role="dialog" aria-modal='true'>
             <div
                 className={`absolute inset-0 bg-black/60 transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
                 onClick={onClose}
             />
             <div className="absolute inset-0 flex items-center justify-center p-4">
                 <div
+                    onClick={(e) => e.stopPropagation()}
                     className={`relative w-[96vw] max-w-[1600px] max-h-[90vh] overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-2xl backdrop-blur-lg transition-all duration-200 ${visible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'}`}
                 >
                     <div className="flex items-center justify-between border-b border-white/10 p-4 gap-3">
@@ -99,7 +104,7 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
                         </button>
                     </div>
 
-                    <div className="max-h-[80vh] overflow-auto p-4">
+                    <div className="max-h-[80vh] overflow-auto overscroll-contain p-4">
                         <div className="mb-3 grid grid-cols-4 gap-2 px-3 text-xs uppercase tracking-widest text-white/50">
                             <div className="col-span-2">Player</div>
                             <div>K/D/A</div>
