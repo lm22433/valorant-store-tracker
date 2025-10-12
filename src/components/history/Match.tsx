@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ProcessedMatchData } from '../../history/types';
+import MatchPopup from './MatchPopup';
 
 
 interface MatchProps {
@@ -8,7 +9,7 @@ interface MatchProps {
 
 const Match: React.FC<MatchProps> = ({match}) => {
 
-    const [expanded, setExpanded] = useState<boolean>(false);
+    const [popup, setPopup] = useState<boolean>(false);
 
     const player = match.playerInfo[match.matchInfo.playerIndex];
     const playerTeam = match.teamInfo!.find(team => player.teamId === team.teamId)!;
@@ -39,7 +40,7 @@ const Match: React.FC<MatchProps> = ({match}) => {
     return (
         <div
             className={`group relative flex flex-col gap-4 overflow-hidden rounded-2xl border bg-white/5 p-5 transition-all duration-300 backdrop-blur-xl cursor-pointer select-none sm:p-6 ${containerStyles}`}
-            onClick={() => setExpanded(!expanded)}
+            onClick={() => setPopup(!popup)}
         >
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <img
@@ -95,21 +96,8 @@ const Match: React.FC<MatchProps> = ({match}) => {
                 </div>
             </div>
 
-            <div className="relative z-10 flex items-center justify-between text-xs text-white/50">
-                <span>{expanded ? "Hide quick breakdown" : "Tap to view more details"}</span>
-                <span className="text-sm text-white/70 transition-transform duration-300 group-hover:translate-x-1">{expanded ? "–" : "→"}</span>
-            </div>
-
-            <section
-                className={`relative z-10 overflow-hidden rounded-xl border border-white/10 bg-black/40 text-sm text-white/70 transition-all duration-300 ease-out ${
-                    expanded ? "max-h-64 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"
-                }`}
-            >
-                <div className={`grid gap-2 p-5 transition-opacity duration-300 ease-out ${expanded ? "opacity-100" : "opacity-0"}`}>
-                    <p className="font-medium text-white">match details</p>
-                    <p>more match details</p>
-                    <p>yet more details!!!</p>
-                </div>
+            <section>
+                <MatchPopup match={match} isOpen={popup} onClose={() => setPopup(false)} />
             </section>
         </div>
     )
