@@ -48,7 +48,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#0a0e27] via-[#1a1f3a] to-[#2d1b4e] text-white font-sans antialiased">
-      {isLoggedIn ? <Home /> : <LoginScreen onLogin={handleLogin} />}
+      {isLoggedIn ? <Home setLoggedIn={setIsLoggedIn}/> : <LoginScreen onLogin={handleLogin} />}
     </div>
   );
 }
