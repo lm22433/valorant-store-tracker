@@ -15,7 +15,10 @@ const Header: React.FC<Props> = ({ user, onRefresh, onHome, onLogout }) => {
   useEffect(() => {
     if (!showLogoutConfirm) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowLogoutConfirm(false);
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setShowLogoutConfirm(false);
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -69,7 +72,13 @@ const Header: React.FC<Props> = ({ user, onRefresh, onHome, onLogout }) => {
               <p className="mb-4 text-sm text-white/80">You will need to sign in again to access your store and match data.</p>
               <div className="flex justify-end gap-3">
                 <button onClick={() => setShowLogoutConfirm(false)} className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm hover:bg-white/15">Cancel</button>
-                <button onClick={() => { setShowLogoutConfirm(false); onLogout(); }} className="rounded-md border border-rose-400/40 bg-rose-500/20 px-3 py-2 text-sm text-rose-100 hover:bg-rose-500/30">Log out</button>
+                <button
+                  onClick={() => { setShowLogoutConfirm(false); onLogout(); }}
+                  className="rounded-md border border-rose-400/40 bg-rose-500/20 px-3 py-2 text-sm text-rose-100 hover:bg-rose-500/30"
+                  autoFocus
+                >
+                  Log out
+                </button>
               </div>
             </div>
           </div>
