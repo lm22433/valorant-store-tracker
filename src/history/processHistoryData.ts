@@ -1,5 +1,5 @@
 import { MatchDetailsResponse, PlayerInfoResponse } from "../types";
-import { ProcessedMatchData, MatchInfo, ValorantMap, PlayerInfo, TeamInfo, ValorantAgent } from "./types";
+import { ProcessedMatchData, DRAW, WIN, LOSS, ValorantMap, PlayerInfo, TeamInfo, ValorantAgent } from "./types";
 
 const mapNames: Record<string, string> = {
     "Infinity": "Abyss",
@@ -16,7 +16,6 @@ const mapNames: Record<string, string> = {
     "Bonsai": "Split",
     "Juliett": "Sunset"
 }
-
 
 export const processMatchData = (
   matchResponse: MatchDetailsResponse,
@@ -43,8 +42,11 @@ export const processMatchData = (
     const teamInfo: TeamInfo[] = matchResponse.teams!;
     const mapName = mapNames[matchResponse.matchInfo.mapId.split("/").pop()!];
     const playerIndex = playerInfo.findIndex(player => (player.gameName + player.tagLine) === (user.acct.game_name + user.acct.tag_line))!;
+    const playerTeam = teamInfo.find(team => playerInfo[playerIndex].teamId === team.teamId)!;
+    const enemyTeam = teamInfo.find(team => playerInfo[playerIndex].teamId !== team.teamId)!;
 
-    const matchInfo: MatchInfo = {
+    return {
+        result: playerTeam.won && enemyTeam.won ? DRAW : playerTeam.won ? WIN : LOSS,
         playerIndex: playerIndex,
         agentName: agents.find(agent => agent.uuid === playerInfo[playerIndex].characterId)!.displayName,
         agentIconUrl: agents.find(agent => agent.uuid === playerInfo[playerIndex].characterId)!.displayIcon,
@@ -52,12 +54,8 @@ export const processMatchData = (
         mapIconUrl: maps.find(map => map.displayName === mapName)!.listViewIcon,
         gameLengthMillis: matchResponse.matchInfo.gameLengthMillis,
         gameStartMillis: matchResponse.matchInfo.gameStartMillis,
-        queueID: matchResponse.matchInfo.queueID
-    }
-
-    return {
-        matchInfo: matchInfo,
-        playerInfo: playerInfo,
-        teamInfo: teamInfo
+        queueID: matchResponse.matchInfo.queueID,
+        players: playerInfo,
+        teams: teamInfo
     }
 }

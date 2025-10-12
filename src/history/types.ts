@@ -138,7 +138,19 @@ export interface TeamInfo {
     numPoints: number;
 }
 
-export interface MatchInfo {
+export enum MatchResult {
+    WIN,
+    LOSS,
+    DRAW,
+}
+
+// Allow importing enum members directly (e.g., import { WIN } from './types')
+export const WIN = MatchResult.WIN;
+export const LOSS = MatchResult.LOSS;
+export const DRAW = MatchResult.DRAW;
+
+export interface ProcessedMatchData {
+    result: MatchResult;
     playerIndex: number;
     agentName: string;
     agentIconUrl: string;
@@ -147,10 +159,6 @@ export interface MatchInfo {
     gameLengthMillis: number | null;
     gameStartMillis: number;
     queueID: string;
-}
-
-export interface ProcessedMatchData {
-    matchInfo: MatchInfo;
-    playerInfo: PlayerInfo[];
-    teamInfo: TeamInfo[];
+    players: PlayerInfo[];
+    teams: TeamInfo[];
 }
