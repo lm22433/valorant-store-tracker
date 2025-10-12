@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import "./App.css";
 import LoadingScreen from "./components/common/LoadingScreen";
 import LoginScreen from "./components/auth/LoginScreen";
 import Home from "./components/Home";
@@ -48,8 +47,8 @@ function App() {
   if (isCheckingAuth) return <LoadingScreen message="Checking authentication..." />;
 
   return (
-    <div className="app">
-      {isLoggedIn ? <Home /> : <LoginScreen onLogin={handleLogin} />}
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#0a0e27] via-[#1a1f3a] to-[#2d1b4e] text-white font-sans antialiased">
+      {isLoggedIn ? <Home setLoggedIn={setIsLoggedIn}/> : <LoginScreen onLogin={handleLogin} />}
     </div>
   );
 }

@@ -6,7 +6,11 @@ import Header from './common/Header';
 import LoadingScreen from './common/LoadingScreen';
 import useUserData from '../hooks/useUserData';
 
-const Home: React.FC = () => {
+interface HomeProps {
+    setLoggedIn: (loggedIn: boolean) => void;
+}
+
+const Home: React.FC<HomeProps> = ({ setLoggedIn }) => {
 
     enum Content {
         Empty,
@@ -32,6 +36,10 @@ const Home: React.FC = () => {
         }
     }, [activeContentRefetch, refetch]);
 
+    const handleLogout = () => {
+        setLoggedIn(false);
+    }
+
     if (isLoading) return <LoadingScreen message="Loading your home..." />;
 
     if (error) {
@@ -48,7 +56,7 @@ const Home: React.FC = () => {
 
     return (
         <div>
-        <Header user={user} onRefresh={handleRefresh} onHome={handleHome}/>
+        <Header user={user} onRefresh={handleRefresh} onHome={handleHome} onLogout={handleLogout}/>
         <div>
             {(() => {
                 switch(content) {
