@@ -12,16 +12,19 @@ interface StoreProps {
 }
 
 const Store: React.FC<StoreProps> = ({ registerRefetch }) => {
-  const { user, store, wallet, skinData, isLoading, error, refetch } = useStoreData();
+  const { store, wallet, buddyData, playerCardData, playerTitleData, sprayData, weaponSkinData, isLoading, error, refetch } = useStoreData();
 
   useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
   const processedStore = useMemo(() => {
-    if (!store || !skinData.length) return null;
-    return processStoreData(store, skinData);
-  }, [store, skinData]);
+    if (!store || !weaponSkinData.length) return null;
+    let test = processStoreData(store, weaponSkinData, buddyData, playerCardData, playerTitleData, sprayData);
+    console.log('Processed Store:', test);
+    return test;
+  }, [store, buddyData, playerCardData, playerTitleData, sprayData, weaponSkinData]);
 
   const timeRemaining = useTimer(processedStore?.timeUntilReset || 0);
+  useTimer(processedStore?.nightMarketReset || 0);
 
   if (isLoading) return <LoadingScreen message="Loading your store..." />;
 
@@ -50,6 +53,10 @@ const Store: React.FC<StoreProps> = ({ registerRefetch }) => {
         <section className="space-y-8">
           <h3 className="text-center text-2xl font-semibold text-white">Daily Store</h3>
           <StoreItems items={processedStore?.dailyStore || []} />
+        </section>
+        <section className="space-y-8">
+          <h3 className="text-center text-2xl font-semibold text-white">Accessory Store</h3>
+          <StoreItems items={processedStore?.accessoryStore || []} />
         </section>
         {processedStore?.nightMarket?.length ? (
           <section className="space-y-8">
