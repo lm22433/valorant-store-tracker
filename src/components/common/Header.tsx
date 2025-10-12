@@ -5,9 +5,10 @@ interface Props {
   user: PlayerInfoResponse | null;
   onRefresh: () => void;
   onHome: () => void;
+  onLogout: () => void;
 }
 
-const Header: React.FC<Props> = ({ user, onRefresh, onHome }) => (
+const Header: React.FC<Props> = ({ user, onRefresh, onHome, onLogout }) => (
   <header className="border-b border-white/10 bg-white/5 px-6 py-6 backdrop-blur-xl">
     <div className="mx-auto flex max-w-[1400px] items-center justify-between">
       <div className="flex items-center gap-4">
@@ -33,6 +34,13 @@ const Header: React.FC<Props> = ({ user, onRefresh, onHome }) => (
           title="Home"
         >
           ⌂
+        </button>
+        <button
+          className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-xl text-white transition duration-200 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+          onClick={onLogout}
+          title="Logout"
+        >
+          →
         </button>
       </div>
     </div>
