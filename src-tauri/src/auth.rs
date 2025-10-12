@@ -12,6 +12,7 @@ pub async fn initiate_auth_flow(app: tauri::AppHandle) {
     let window_label = "riot-api-auth";
 
     tauri::WebviewWindowBuilder::new(&app, window_label, tauri::WebviewUrl::External(auth_url))
+        .incognito(true)
         .center()
         .on_navigation({
             let app = app.clone();
