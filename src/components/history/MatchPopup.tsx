@@ -43,9 +43,9 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
         if (p.roundDamage) {
             for (const rd of p.roundDamage) {
                 // damage dealt by p.subject in rd.round
-                (dealtBy[p.subject] ||= {})[rd.round] = ((dealtBy[p.subject] ||= {})[rd.round] || 0) + rd.damage;
+                (dealtBy[p.subject] ||= {})[rd.round] = (dealtBy[p.subject][rd.round] || 0) + rd.damage;
                 // damage received by rd.receiver in rd.round
-                (receivedBy[rd.receiver] ||= {})[rd.round] = ((receivedBy[rd.receiver] ||= {})[rd.round] || 0) + rd.damage;
+                (receivedBy[rd.receiver] ||= {})[rd.round] = (receivedBy[rd.receiver][rd.round] || 0) + rd.damage;
             }
         }
     }
