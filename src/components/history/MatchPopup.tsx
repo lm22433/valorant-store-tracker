@@ -27,12 +27,6 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
 
     if (!isOpen) return null;
 
-    // const playersSorted = [...match.players].sort((a, b) => {
-    //     const aACS = a.stats && a.stats.roundsPlayed ? a.stats.score / a.stats.roundsPlayed : 0;
-    //     const bACS = b.stats && b.stats.roundsPlayed ? b.stats.score / b.stats.roundsPlayed : 0;
-    //     return bACS - aACS;
-    // });
-
     const resultLabel = match.result === DRAW ? 'Draw' : match.result === WIN ? 'Victory' : 'Defeat';
     const resultClass = match.result === DRAW ? 'text-white' : match.result === WIN ? 'text-teal-400' : 'text-rose-400';
 
@@ -84,13 +78,16 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
         const acs = stats?.roundsPlayed ? Math.round((stats.score || 0) / stats.roundsPlayed) : '—';
         const kd = d === 0 ? (k > 0 ? '∞' : '0.00') : (k / d).toFixed(2);
         const dd = computeDamageDelta(subject, stats?.roundsPlayed);
-        const teamClasses = teamId === 'Blue'
-            ? 'border-cyan-400/30 bg-cyan-400/10'
-            : teamId === 'Red'
-                ? 'border-rose-400/30 bg-rose-500/10'
-                : 'border-white/10 bg-white/5';
+        const teamClasses =
+            subject == match.players[match.playerIndex].subject ? 
+                teamId === 'Blue' ? 'border-cyan-400/30 bg-gradient-to-r from-yellow-400/20 via-cyan-400/10 to-cyan-400/10'
+                : teamId === 'Red' ? 'border-rose-400/30 bg-gradient-to-r from-yellow-400/20 via-rose-500/10 to-rose-500/10'
+                : 'border-yellow-500/50 bg-yellow-500/10'
+            : teamId === 'Blue' ? 'border-cyan-400/30 bg-cyan-400/10'
+            : teamId === 'Red' ? 'border-rose-400/30 bg-rose-500/10'
+            : 'border-white/10 bg-white/5';
         return (
-            <div className={`grid w-full grid-cols-6 items-center rounded-lg border px-3 py-2 text-sm text-white/80 ${teamClasses}`}>
+            <div className={`grid w-full h-14 grid-cols-6 items-center rounded-lg border px-3 py-2 text-m text-white/80 ${teamClasses}`}>
                 <div className="col-span-2 flex items-center gap-2 truncate">
                     <img
                         src={`https://media.valorant-api.com/agents/${characterId}/displayicon.png`}
@@ -105,7 +102,7 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
                 <div className="text-center font-mono text-white/80">{kd}</div>
                 <div className="text-center text-white/80">{k}/{d}/{a}</div>
                 <div className="text-right font-mono text-white/80">{dd}</div>
-                <div className="text-right font-mono text-white/70">{acs}</div>
+                <div className="text-right font-mono text-white/80">{acs}</div>
             </div>
         );
     };
@@ -119,7 +116,7 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
             <div className="absolute inset-0 flex items-center justify-center p-4">
                 <div
                     onClick={(e) => e.stopPropagation()}
-                    className={`relative w-full max-w-5xl max-h-screen overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-2xl backdrop-blur-lg transition-all duration-200 ${visible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'}`}
+                    className={`relative w-full max-w-7xl h-fit overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-2xl backdrop-blur-lg transition-all duration-200 ${visible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'}`}
                 >
                     <div className="relative flex items-center justify-between border-b border-white/10 p-4 gap-3">
                         <div className="flex items-center gap-3">
@@ -129,13 +126,13 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
                                 className="h-8 w-8 rounded-md border border-white/10 bg-black/30 object-contain"
                             />
                             <div>
-                                <h3 className="text-lg font-semibold text-white">{match.mapName}</h3>
-                                <p className="text-xs text-white/60">{new Date(match.gameStartMillis).toLocaleString()} • {match.queueID || 'Unknown'}</p>
+                                <h3 className="text-xl font-semibold text-white">{match.mapName}</h3>
+                                <p className="text-xs text-white/60">{new Date(match.gameStartMillis).toLocaleString()} • {(match.queueID.charAt(0).toUpperCase() + match.queueID.slice(1)) || 'Unknown'}</p>
                             </div>
                         </div>
                         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                             <h2 className={`text-center text-2xl sm:text-3xl font-extrabold leading-tight ${resultClass}`}>
-                                {resultLabel} {match.teams[0].roundsWon}:{match.teams[1].roundsWon}
+                                {resultLabel} - {match.teams[0].roundsWon} : {match.teams[1].roundsWon}
                             </h2>
                         </div>
                         <button
@@ -151,7 +148,7 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
                             <div className="col-span-2">Player</div>
                             <div className="text-center">K/D</div>
                             <div className="text-center">K/D/A</div>
-                            <div className="text-right">DD</div>
+                            <div className="text-right">DDΔ</div>
                             <div className="text-right">ACS</div>
                         </div>
                         <div className="space-y-2">
