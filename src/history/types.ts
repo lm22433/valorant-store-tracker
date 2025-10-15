@@ -86,6 +86,8 @@ export interface ValorantAPIAgentResponse {
 }
 
 export interface ValorantMap {
+    uuid: string;
+    assetPath: string;
     displayName: string;
     listViewIcon: string;
 }

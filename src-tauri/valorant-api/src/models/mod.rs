@@ -7,6 +7,21 @@ pub struct EntitlementResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct NameInfo {
+    #[serde(rename(serialize = "displayName", deserialize = "DisplayName"))]
+    display_name: String,
+    /// Player UUID
+    #[serde(rename(serialize = "subject", deserialize = "Subject"))]
+    subject: String,
+    #[serde(rename(serialize = "gameName", deserialize = "GameName"))]
+    game_name: String,
+    #[serde(rename(serialize = "tagLine", deserialize = "TagLine"))]
+    tag_line: String,
+}
+
+pub type NameServiceResponse = Vec<NameInfo>;
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerInfoResponse {
     pub country: String,
     pub sub: String,

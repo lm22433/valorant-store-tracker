@@ -1,7 +1,7 @@
-use crate::endpoints::{match_history_url, match_details_url, current_match_player_url, current_match_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
+use crate::endpoints::{current_match_player_url, current_match_url, match_details_url, match_history_url, name_service_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
 use crate::errors::ValorantApiError;
 use crate::http::HttpClient;
-use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse, MatchDetailsResponse, CurrentMatchPlayerResponse, CurrentMatchResponse};
+use crate::models::{NameInfo, NameServiceResponse, EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse, MatchDetailsResponse, CurrentMatchPlayerResponse, CurrentMatchResponse};
 
 pub struct ValorantApiClient<C: HttpClient> {
     http_client: C,
@@ -217,6 +217,30 @@ impl<C: HttpClient> ValorantApiClient<C> {
             .send()
             .await?;
         let body = resp.json::<RiotGeoResponse>()?;
+        Ok(body)
+    }
+
+    pub async fn get_game_name(
+        &self,
+        shard: &str,
+        puuids: &Vec<String>,
+        client_platform: &str,
+        client_version: &str,
+        entitlement_token: &str,
+        auth_token: &str,
+    ) -> Result<NameServiceResponse, ValorantApiError> {
+        let url = name_service_url(shard);
+
+        let resp = self.http_client
+            .put(url)
+            .bearer_auth(auth_token)
+            .header("X-Riot-ClientPlatform", client_platform)
+            .header("X-Riot-ClientVersion", client_version)
+            .header("X-Riot-Entitlements-JWT", entitlement_token)
+            .json(&serde_json::json!(puuids))
+            .send()
+            .await?;
+        let body = resp.json::<Vec<NameInfo>>()?;
         Ok(body)
     }
 }

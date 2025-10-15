@@ -1,11 +1,12 @@
+import { ValorantAgent, ValorantMap } from "../history/types";
+
 export interface ProcessedLiveData {
-  matchId: string;
-  map: string
+  map: ValorantMap | null;
   mode: string;
   players: {
     subject: string;
     teamId: ("Blue" | "Red") | string;
-    characterId: string;
+    agent: ValorantAgent | null;
     playerIdentity: {
       /** Player UUID */
       subject: string;

@@ -1,46 +1,28 @@
 import { CurrentMatchResponse } from "../types";
 import { ProcessedLiveData } from "./types";
-
-const mapNames: Record<string, string> = {
-    Infinity: 'Abyss',
-    Ascent: 'Ascent',
-    Duality: 'Bind',
-    Foxtrot: 'Breeze',
-    Rook: 'Corrode',
-    Canyon: 'Fracture',
-    Triad: 'Haven',
-    Port: 'Icebox',
-    Jam: 'Lotus',
-    Pitt: 'Pearl',
-    Poveglia: 'Range',
-    Bonsai: 'Split',
-    Juliett: 'Sunset',
-    Skirmish_A: 'Skirmish A',
-    Skirmish_B: 'Skirmish B',
-    Skirmish_C: 'Skirmish C',
-};
+import { ValorantMap, ValorantAgent } from "../history/types";
 
 const gameMode = (str: string) => {
-    if (str.includes('Unrated')) return 'Unrated';
+    if (!str) return 'Unknown';
+    if (str.includes('BombGameMode')) return 'Unrated';
     if (str.includes('Competitive')) return 'Competitive';
     if (str.includes('QuickBomb')) return 'Spike Rush';
     if (str.includes('Deathmatch')) return 'Deathmatch';
     if (str.includes('Swiftplay')) return 'Swiftplay';
-    if (str.includes('Hurm')) return 'Team Deathmatch';
+    if (str.includes('HURM')) return 'Team Deathmatch';
     if (str.includes('Premier')) return 'Premier';
-    if (str.includes('Custom')) return 'Custom Game';
+    if (str.includes('Skirmish')) return 'Skirmish';
     return str;
 };
 
-export const processLiveData = (liveData: CurrentMatchResponse): ProcessedLiveData => {
-    const processedMap = mapNames[liveData.MapID.split("/").pop() || ''];
-    const processedMode = gameMode(liveData.ModeID.split("/").pop() || '')
+export const processLiveData = (match: CurrentMatchResponse, maps: ValorantMap[], agents: ValorantAgent[]): ProcessedLiveData => {
+    const processedMode = match.ProvisioningFlow == "CustomGame" ? 'Custom' : gameMode(match.ModeID.split("/").pop() || '');
 
     // Transform player objects to have lowercase keys
-    const processedPlayers = liveData.Players.map(player => ({
+    const processedPlayers = match.Players.map(player => ({
         subject: player.Subject,
         teamId: player.TeamID,
-        characterId: player.CharacterID,
+        agent: agents.find(a => a.uuid == player.CharacterID) || null,
         playerIdentity: {
             subject: player.PlayerIdentity.Subject,
             playerCardId: player.PlayerIdentity.PlayerCardID,
@@ -61,9 +43,12 @@ export const processLiveData = (liveData: CurrentMatchResponse): ProcessedLiveDa
         isAssociated: player.IsAssociated
     }));
 
+    console.log(match.MapID);
+    console.log(maps[0].assetPath);
+    console.log(maps[0].uuid);
+
     return {
-        matchId: liveData.MatchID,
-        map: processedMap,
+        map: maps.find(m => m.assetPath == match.MapID) || null,
         mode: processedMode,
         players: processedPlayers,
     }

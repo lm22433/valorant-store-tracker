@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import useLiveData from '../hooks/useLiveData';
 import LoadingScreen from './common/LoadingScreen';
 import { processLiveData } from '../live/processLiveData';
-import { ProcessedLiveData } from '../live/types';
+import { ValorantAgent } from '../history/types';
+import { PlayerInfoResponse } from '../types';
 
 interface LiveProps {
     registerRefetch: (fn: () => void) => void;
@@ -10,13 +11,13 @@ interface LiveProps {
 
 const Live: React.FC<LiveProps> = ({ registerRefetch }) => {
 
-    const { user, match, isLoading, error, refetch } = useLiveData();
+    const { user, match, names, maps, agents, isLoading, error, refetch } = useLiveData();
     
-    useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);    
+    useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
-    const processedMatch: ProcessedLiveData | null = useMemo(() => {
-        if(match) return processLiveData(match!);
-        else return null;
+    const processedMatch = useMemo(() => {
+        if (!match || !maps.length || !agents.length) return null;
+        return processLiveData(match, maps, agents);
     }, [match])
 
     if (isLoading) return <LoadingScreen message="Loading your match..." />;
@@ -46,8 +47,10 @@ const Live: React.FC<LiveProps> = ({ registerRefetch }) => {
         );
     }
 
-    const PlayerRow = ({subject, teamId, characterId}: {subject: string, teamId: string, characterId: string}) => {
+    const PlayerRow = ({subject, teamId, agent}: {subject: string, teamId: string, agent: ValorantAgent | null}) => {
         // Placeholder values for live match (stats not available during game)
+        const nameInfo = names?.find(n => n.subject == subject);
+        const name = nameInfo?.gameName + "#" + nameInfo?.tagLine;
         const k = '—';
         const d = '—';
         const a = '—';
@@ -55,23 +58,26 @@ const Live: React.FC<LiveProps> = ({ registerRefetch }) => {
         const kd = '—';
         const dd = '—';
 
-        const teamClasses = teamId === 'Blue'
-            ? 'border-cyan-400/30 bg-cyan-400/10'
-            : teamId === 'Red'
-                ? 'border-rose-400/30 bg-rose-500/10'
-                : 'border-white/10 bg-white/5';
+        const teamClasses =
+            name == user?.acct.game_name || '' + '#' + user?.acct.tag_line || '' ? 
+                teamId === 'Blue' ? 'border-cyan-400/30 bg-gradient-to-r from-yellow-400/20 via-cyan-400/10 to-cyan-400/10'
+                : teamId === 'Red' ? 'border-rose-400/30 bg-gradient-to-r from-yellow-400/20 via-rose-500/10 to-rose-500/10'
+                : 'border-yellow-500/50 bg-yellow-500/10'
+            : teamId === 'Blue' ? 'border-cyan-400/30 bg-cyan-400/10'
+            : teamId === 'Red' ? 'border-rose-400/30 bg-rose-500/10'
+            : 'border-white/10 bg-white/5';
 
         return (
             <div key={subject} className={`grid w-full h-14 grid-cols-6 items-center rounded-lg border px-3 py-2 text-m text-white/80 ${teamClasses}`}>
                 <div className="col-span-2 flex items-center gap-2 truncate">
                     <img
-                        src={`https://media.valorant-api.com/agents/${characterId}/displayicon.png`}
+                        src={agent?.displayIcon || undefined}
                         alt="agent"
                         className="h-7 w-7 rounded-sm object-contain"
                         onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }}
                     />
                     <span className="font-medium text-white">
-                        {subject}<span className="text-white/50"></span>
+                        {name || agent?.displayName || "Unknown Agent"}<span className="text-white/50"></span>
                     </span>
                 </div>
                 <div className="text-center font-mono text-white/80">{kd}</div>
@@ -98,8 +104,7 @@ const Live: React.FC<LiveProps> = ({ registerRefetch }) => {
                 <section className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                 <div className="space-y-2">
                     <h1 className="text-3xl font-semibold text-white sm:text-4xl">Live Match</h1>
-                    <p className="text-sm text-white/60">Match ID: {processedMatch.matchId}</p>
-                    <p className="text-sm text-white/60">Map: {processedMatch.map}</p>
+                    <p className="text-sm text-white/60">Map: {processedMatch.map?.displayName || "Unknown"}</p>
                     <p className="text-sm text-white/60">Mode: {processedMatch.mode}</p>
                 </div>
                 </section>
@@ -132,7 +137,7 @@ const Live: React.FC<LiveProps> = ({ registerRefetch }) => {
                                             key={p.subject}
                                             subject={p.subject}
                                             teamId={p.teamId}
-                                            characterId={p.characterId}
+                                            agent={p.agent}
                                         />
                                     ))}
                                 </div>

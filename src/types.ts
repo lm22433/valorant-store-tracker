@@ -284,7 +284,7 @@ export interface CurrentMatchResponse {
   MatchmakingData: null;
 }
 
-export type MatchHistoryResponse = {
+export interface MatchHistoryResponse {
   /** Player UUID */
   Subject: string;
   BeginIndex: number;
@@ -293,7 +293,7 @@ export type MatchHistoryResponse = {
   History: MatchID[];
 };
 
-export type MatchID = {
+export interface MatchID {
   MatchID: string;
   /** Milliseconds since epoch */
   GameStartTime: number;
@@ -301,7 +301,7 @@ export type MatchID = {
   QueueID: string;
 }
 
-export type MatchDetailsResponse = {
+export interface MatchDetailsResponse {
     matchInfo: {
         /** Match ID */
         matchId: string;
@@ -596,3 +596,13 @@ export type MatchDetailsResponse = {
         round: number;
     }[] | null;
 };
+
+export interface NameInfo {
+    displayName: string;
+    /** Player UUID */
+    subject: string;
+    gameName: string;
+    tagLine: string;
+};
+
+export type NameServiceResponse = NameInfo[]

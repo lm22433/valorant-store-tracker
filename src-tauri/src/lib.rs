@@ -8,6 +8,7 @@ use crate::auth::*;
 use crate::store::*;
 use crate::history::*;
 use crate::live::*;
+use crate::helpers::{get_game_name};
 use valorant_api::client::ValorantApiClient;
 use valorant_api::http::reqwest::ReqwestHttpClient;
 
@@ -24,6 +25,7 @@ pub fn run() {
             initiate_auth_flow,
             is_logged_in,
             get_account_info_command,
+            get_game_name,
             get_store_data,
             get_history_data,
             get_match_data,

@@ -48,3 +48,10 @@ pub fn current_match_url(region: &str, shard: &str, match_id: &str) -> String {
 		region, shard, match_id
 	)
 }
+
+pub fn name_service_url(shard: &str) -> String {
+	format!(
+		"https://pd.{}.a.pvp.net/name-service/v2/players",
+		shard
+	)
+}
