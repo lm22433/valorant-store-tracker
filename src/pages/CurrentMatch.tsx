@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import useLiveData from '../hooks/useLiveData';
-import LoadingScreen from './common/LoadingScreen';
-import { processLiveData } from '../live/processLiveData';
-import { ValorantAgent, ValorantMap } from '../history/types';
-import useMatchDetails from '../hooks/useMatchDetails';
-import { PlayerInfoResponse } from '../types';
+import LoadingScreen from '../components/LoadingScreen';
+import { processLiveData } from '../hooks/processLiveData';
+import { ValorantAgent, ValorantMap } from '../types/assetTypes';
+// import useMatchDetails from '../hooks/useMatchDetails';
+import { PlayerInfoResponse } from '../types/responseTypes';
 
 interface LiveProps {
     user: PlayerInfoResponse | null;
@@ -16,8 +16,6 @@ interface LiveProps {
 const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
 
     const { match, names, isLoading, error, refetch } = useLiveData();
-
-    const matchDetails = match && useMatchDetails(match.MatchID);
     
     useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
@@ -25,6 +23,8 @@ const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
         if (!match) return null;
         return processLiveData(match);
     }, [match])
+
+    const map = maps.find(m => m.displayName === processedMatch?.map) || null;
 
     if (isLoading) return <LoadingScreen message="Loading your match..." />;
 
@@ -78,7 +78,7 @@ const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
                 <div className="col-span-2 flex items-center gap-2 truncate">
                     <img
                         src={agent?.displayIcon || undefined}
-                        alt="agent"
+                        alt={agent?.displayName || "Unknown Agent"}
                         className="h-7 w-7 rounded-sm object-contain"
                         onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }}
                     />
@@ -110,7 +110,7 @@ const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
                 <section className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                 <div className="space-y-2">
                     <h1 className="text-3xl font-semibold text-white sm:text-4xl">Live Match</h1>
-                    <p className="text-sm text-white/60">Map: {maps.find(m => m.uuid === processedMatch.map)?.displayName || "Unknown"}</p>
+                    <p className="text-sm text-white/60">Map: {map?.displayName || "Unknown Map"}</p>
                     <p className="text-sm text-white/60">Mode: {processedMatch.mode}</p>
                 </div>
                 </section>

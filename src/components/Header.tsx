@@ -1,5 +1,5 @@
 import React from 'react';
-import { PlayerInfoResponse } from '../../types';
+import { PlayerInfoResponse } from '../types/responseTypes';
 
 interface Props {
   user: PlayerInfoResponse | null;

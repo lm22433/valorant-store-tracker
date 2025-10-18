@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { PlayerInfoResponse, StorefrontResponse } from '../types';
-import { ValorantAPIResponse, ValorantSkin } from '../store/types';
+import { PlayerInfoResponse, StorefrontResponse } from '../types/responseTypes';
+import { ValorantAPIResponse, ValorantSkin } from '../types/storeTypes';
 
 interface UseStoreDataResult {
 	user: PlayerInfoResponse | null;

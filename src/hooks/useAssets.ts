@@ -1,26 +1,5 @@
-import { useCallback, useState, useRef, useEffect } from "react";
-import { ValorantAgent, ValorantAPIAgentResponse, ValorantAPIMapResponse, ValorantMap } from "../history/types";
-
-
-const mapNames: Record<string, string> = {
-    "Infinity": "Abyss",
-    "Ascent": "Ascent",
-    "Duality": "Bind",
-    "Foxtrot": "Breeze",
-    "Rook": "Corrode",
-    "Canyon": "Fracture",
-    "Triad": "Haven",
-    "Port": "Icebox",
-    "Jam": "Lotus",
-    "Pitt": "Pearl",
-    "Poveglia": "Range",
-    "Bonsai": "Split",
-    "Juliett": "Sunset",
-    "Skirmish_A": "Skirmish A",
-    "Skirmish_B": "Skirmish B",
-    "Skirmish_C": "Skirmish C"
-};
-
+import { useCallback, useState, useEffect } from "react";
+import { ValorantAgent, ValorantAPIAgentResponse, ValorantAPIMapResponse, ValorantMap } from "../types/assetTypes";
 
 const useAssets = (cachedMaps: React.MutableRefObject<ValorantMap[]>, cachedAgents: React.MutableRefObject<ValorantAgent[]>) => {
     const [maps, setMaps] = useState<ValorantMap[]>(cachedMaps.current);

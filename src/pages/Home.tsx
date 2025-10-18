@@ -2,11 +2,11 @@ import React, { useState, useCallback, useRef } from 'react';
 import Store from './Store';
 import Live from './CurrentMatch';
 import History from './MatchHistory';
-import Header from './common/Header';
-import LoadingScreen from './common/LoadingScreen';
+import Header from '../components/Header';
+import LoadingScreen from '../components/LoadingScreen';
 import useUserData from '../hooks/useUserData';
 import useAssets from '../hooks/useAssets';
-import { ValorantAgent, ValorantMap } from '../history/types';
+import { ValorantAgent, ValorantMap } from '../types/assetTypes';
 
 interface HomeProps {
     setLoggedIn: (loggedIn: boolean) => void;

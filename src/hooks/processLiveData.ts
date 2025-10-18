@@ -1,5 +1,25 @@
-import { CurrentMatchResponse } from "../types";
-import { ProcessedLiveData } from "./types";
+import { CurrentMatchResponse } from "../types/responseTypes";
+import { ProcessedLiveData } from "../types/liveTypes";
+
+const mapNames: Record<string, string> = {
+    "Infinity": "Abyss",
+    "Ascent": "Ascent",
+    "Duality": "Bind",
+    "Foxtrot": "Breeze",
+    "Rook": "Corrode",
+    "Canyon": "Fracture",
+    "Triad": "Haven",
+    "Port": "Icebox",
+    "Jam": "Lotus",
+    "Pitt": "Pearl",
+    "Poveglia": "Range",
+    "Bonsai": "Split",
+    "Juliett": "Sunset",
+    "Skirmish_A": "Skirmish A",
+    "Skirmish_B": "Skirmish B",
+    "Skirmish_C": "Skirmish C"
+};
+
 
 const gameMode = (str: string) => {
     if (!str) return 'Unknown';
@@ -44,7 +64,7 @@ export const processLiveData = (match: CurrentMatchResponse): ProcessedLiveData 
 
 
     return {
-        map: match.MapID,
+        map: mapNames[match.MapID.split("/").pop() || ''] || 'Unknown Map',
         mode: processedMode,
         players: processedPlayers,
     }

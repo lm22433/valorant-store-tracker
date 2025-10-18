@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import Match from './history/Match';
+import Match from '../components/Match';
 import useHistoryData from '../hooks/useHistoryData';
-import LoadingScreen from './common/LoadingScreen';
-import { processMatchData } from '../history/processHistoryData';
-import { ValorantAgent, ValorantMap } from '../history/types';
-import { PlayerInfoResponse } from '../types';
+import LoadingScreen from '../components/LoadingScreen';
+import { processHistoryData } from '../hooks/processHistoryData';
+import { ValorantAgent, ValorantMap } from '../types/assetTypes';
+import { PlayerInfoResponse } from '../types/responseTypes';
 
 interface HistoryProps {
     user: PlayerInfoResponse | null;
@@ -22,7 +22,7 @@ const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }
 
     const processedMatches = useMemo(() => {
         if (!matches || !user || !maps.length || !agents.length) return null;
-        return matches.map(match => processMatchData(match));
+        return matches.map(match => processHistoryData(match));
       }, [matches]);
     
 

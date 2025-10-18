@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { ProcessedMatchData, ValorantAgent, ValorantMap } from '../../history/types';
-import { PlayerInfoResponse } from '../../types';
+import { ProcessedHistoryData } from '../types/historyTypes';
+import { ValorantAgent, ValorantMap } from '../types/assetTypes';
+import { PlayerInfoResponse } from '../types/responseTypes';
 
 
 interface MatchProps {
     user: PlayerInfoResponse | null;
     maps: ValorantMap[];
     agents: ValorantAgent[];
-    match: ProcessedMatchData;
+    match: ProcessedHistoryData;
 }
 
-const Match: React.FC<MatchProps> = ({user, maps, agents,match}) => {
+const Match: React.FC<MatchProps> = ({user, maps, agents, match}) => {
 
     const [expanded, setExpanded] = useState<boolean>(false);
 
@@ -19,8 +20,8 @@ const Match: React.FC<MatchProps> = ({user, maps, agents,match}) => {
     const playerTeam = match.teamInfo!.find(team => player.teamId === team.teamId)!;
     const enemyTeam = match.teamInfo!.find(team => player.teamId !== team.teamId)!;
     const draw = playerTeam.roundsWon == enemyTeam.roundsWon;
-    const map = maps.find(m => m.uuid === match.matchInfo.mapName) || undefined;
-    const agent = agents.find(a => a.uuid === player.characterId) || undefined;
+    const map = maps.find(m => m.displayName === match.matchInfo.mapName) || null;
+    const agent = agents.find(a => a.uuid === player.characterId) || null;
 
     const kda = player.stats?.kills.toString() + "/" + player.stats?.deaths.toString() + "/" + player.stats?.assists.toString();
 
@@ -51,7 +52,7 @@ const Match: React.FC<MatchProps> = ({user, maps, agents,match}) => {
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <img
                     src={map?.listViewIcon || undefined}
-                    alt={`${map?.displayName || 'Unknown Map'} art`}
+                    alt={`${map?.displayName || 'Unknown Map'} Art`}
                     className="h-full w-full object-cover object-center opacity-40"
                 />
             </div>
@@ -63,7 +64,7 @@ const Match: React.FC<MatchProps> = ({user, maps, agents,match}) => {
                         <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-black/40 sm:h-20 sm:w-20">
                             <img
                                 src={agent?.displayIcon || undefined}
-                                alt={`${agent?.displayName || 'Unknown Agent'} portrait`}
+                                alt={`${agent?.displayName || 'Unknown Agent'} Portrait`}
                                 className="h-full w-full object-contain"
                             />
                         </div>
@@ -72,7 +73,7 @@ const Match: React.FC<MatchProps> = ({user, maps, agents,match}) => {
                                 {draw ? "Draw" : isWin ? "Victory" : "Defeat"}
                             </div>
                             <div className="text-lg font-semibold text-white sm:text-xl">
-                                {match.matchInfo.mapName}
+                                {map?.displayName || 'Unknown Map'}
                             </div>
                             <div className="text-xs uppercase tracking-[0.25em] text-white/50">
                                 {match.matchInfo.queueID || "Unknown"}

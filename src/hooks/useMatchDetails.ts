@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { MatchDetailsResponse } from "../types";
+import { MatchDetailsResponse } from "../types/responseTypes";
 import { invoke } from "@tauri-apps/api/core";
 
 const useMatchDetails = (matchId: string): MatchDetailsResponse => {

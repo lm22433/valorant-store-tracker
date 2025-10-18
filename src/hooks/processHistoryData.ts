@@ -1,9 +1,28 @@
-import { MatchDetailsResponse } from "../types";
-import { ProcessedMatchData, MatchInfo, PlayerInfo, TeamInfo } from "./types";
+import { MatchDetailsResponse } from "../types/responseTypes";
+import { ProcessedHistoryData, MatchInfo, PlayerInfo, TeamInfo } from "../types/historyTypes";
 
-export const processMatchData = (
+const mapNames: Record<string, string> = {
+    "Infinity": "Abyss",
+    "Ascent": "Ascent",
+    "Duality": "Bind",
+    "Foxtrot": "Breeze",
+    "Rook": "Corrode",
+    "Canyon": "Fracture",
+    "Triad": "Haven",
+    "Port": "Icebox",
+    "Jam": "Lotus",
+    "Pitt": "Pearl",
+    "Poveglia": "Range",
+    "Bonsai": "Split",
+    "Juliett": "Sunset",
+    "Skirmish_A": "Skirmish A",
+    "Skirmish_B": "Skirmish B",
+    "Skirmish_C": "Skirmish C"
+};
+
+export const processHistoryData = (
   matchResponse: MatchDetailsResponse
-): ProcessedMatchData => {
+): ProcessedHistoryData => {
     
     let playerInfo: PlayerInfo[] = matchResponse.players.map(player => ({
         subject: player.subject,
@@ -23,7 +42,7 @@ export const processMatchData = (
     const teamInfo: TeamInfo[] = matchResponse.teams!;
 
     const matchInfo: MatchInfo = {
-        mapName: matchResponse.matchInfo.mapId,
+        mapName: mapNames[matchResponse.matchInfo.mapId.split("/").pop() || ''] || 'Unknown Map',
         gameLengthMillis: matchResponse.matchInfo.gameLengthMillis,
         gameStartMillis: matchResponse.matchInfo.gameStartMillis,
         queueID: matchResponse.matchInfo.queueID

@@ -1,6 +1,6 @@
-import { StorefrontResponse } from '../types';
-import { CURRENCY_IDS } from '../types';
-import { ProcessedStoreData, ProcessedStoreItem, ValorantSkin } from './types';
+import { StorefrontResponse } from '../types/responseTypes';
+import { CURRENCY_IDS } from '../types/responseTypes';
+import { ProcessedStoreData, ProcessedStoreItem, ValorantSkin } from '../types/storeTypes';
 
 // Precompute currency id for VP
 const VP = CURRENCY_IDS.VALORANT_POINTS;

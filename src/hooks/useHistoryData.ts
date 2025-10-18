@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { MatchDetailsResponse, MatchHistoryResponse } from '../types';
+import { MatchDetailsResponse, MatchHistoryResponse } from '../types/responseTypes';
 
 interface UseHistoryDataResult {
 	matches: MatchDetailsResponse[];

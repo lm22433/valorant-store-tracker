@@ -1,4 +1,4 @@
-import { StorefrontResponse } from '../types';
+import { StorefrontResponse } from './responseTypes';
 
 export interface ValorantSkin {
   uuid: string;
