@@ -15,7 +15,7 @@ const Match: React.FC<MatchProps> = ({user, maps, agents, match}) => {
 
     const [expanded, setExpanded] = useState<boolean>(false);
 
-    const player = match.playerInfo.find(p => p.gameName + p.tagLine === (user?.acct.game_name || '') + (user?.acct.tag_line || ''))!;
+    const player = match.playerInfo.find(p => p.gameName + p.tagLine === user!.acct.game_name + user!.acct.tag_line)!;
     const playerIndex = match.playerInfo.indexOf(player);
     const playerTeam = match.teamInfo!.find(team => player.teamId === team.teamId)!;
     const enemyTeam = match.teamInfo!.find(team => player.teamId !== team.teamId)!;

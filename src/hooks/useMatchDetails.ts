@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { MatchDetailsResponse } from "../types/responseTypes";
 import { invoke } from "@tauri-apps/api/core";
 
-const useMatchDetails = (matchId: string): MatchDetailsResponse => {
+const useMatchDetails = (matchId: string): MatchDetailsResponse | null => {
     const [matchDetails, setMatchDetails] = useState<MatchDetailsResponse | null>(null);
 
     const fetchMatch = useCallback(async () => {
@@ -13,7 +13,7 @@ const useMatchDetails = (matchId: string): MatchDetailsResponse => {
         fetchMatch();
     }, [fetchMatch]);
 
-    return matchDetails!;
+    return matchDetails;
 }
 
 export default useMatchDetails;

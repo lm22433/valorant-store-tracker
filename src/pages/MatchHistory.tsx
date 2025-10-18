@@ -21,7 +21,7 @@ const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }
     useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
     const processedMatches = useMemo(() => {
-        if (!matches || !user || !maps.length || !agents.length) return null;
+        if (!matches) return null;
         return matches.map(match => processHistoryData(match));
       }, [matches]);
     

@@ -157,7 +157,7 @@ impl<C: HttpClient> ValorantApiClient<C> {
         let url = storefront_url(shard, puuid);
 
         let resp = self.http_client
-            .post(url)
+            .post(&url)
             .bearer_auth(auth_token)
             .header("X-Riot-ClientPlatform", client_platform)
             .header("X-Riot-ClientVersion", client_version)
@@ -232,7 +232,7 @@ impl<C: HttpClient> ValorantApiClient<C> {
         let url = name_service_url(shard);
 
         let resp = self.http_client
-            .put(url)
+            .put(&url)
             .bearer_auth(auth_token)
             .header("X-Riot-ClientPlatform", client_platform)
             .header("X-Riot-ClientVersion", client_version)

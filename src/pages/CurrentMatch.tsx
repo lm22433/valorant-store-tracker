@@ -55,7 +55,7 @@ const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
 
     const PlayerRow = ({subject, teamId, agent}: {subject: string, teamId: string, agent: ValorantAgent | null}) => {
         // Placeholder values for live match (stats not available during game)
-        const nameInfo = names?.find(n => n.subject == subject);
+        const nameInfo = names?.find(n => n.subject === subject);
         const name = nameInfo?.gameName + "#" + nameInfo?.tagLine;
         const k = '—';
         const d = '—';

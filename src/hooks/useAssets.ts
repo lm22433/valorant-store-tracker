@@ -11,7 +11,7 @@ const useAssets = (cachedMaps: React.MutableRefObject<ValorantMap[]>, cachedAgen
             const response = await fetch('https://valorant-api.com/v1/maps');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data: ValorantAPIMapResponse = await response.json();
-            if (data.status != 200) throw new Error(`API returned status ${data.status}`);
+            if (data.status !== 200) throw new Error(`API returned status ${data.status}`);
             setMaps(data.data.map(map => ({
                 uuid: map.uuid,
                 assetPath: map.assetPath,
@@ -30,7 +30,7 @@ const useAssets = (cachedMaps: React.MutableRefObject<ValorantMap[]>, cachedAgen
             const response = await fetch('https://valorant-api.com/v1/agents?isPlayableCharacter=true');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data: ValorantAPIAgentResponse = await response.json();
-            if (data.status != 200) throw new Error(`API returned status ${data.status}`);
+            if (data.status !== 200) throw new Error(`API returned status ${data.status}`);
             setAgents(data.data.map(agent => ({
                 uuid: agent.uuid,
                 displayName: agent.displayName,
