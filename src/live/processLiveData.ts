@@ -1,6 +1,5 @@
 import { CurrentMatchResponse } from "../types";
 import { ProcessedLiveData } from "./types";
-import { ValorantMap, ValorantAgent } from "../history/types";
 
 const gameMode = (str: string) => {
     if (!str) return 'Unknown';
@@ -15,14 +14,14 @@ const gameMode = (str: string) => {
     return str;
 };
 
-export const processLiveData = (match: CurrentMatchResponse, maps: ValorantMap[], agents: ValorantAgent[]): ProcessedLiveData => {
+export const processLiveData = (match: CurrentMatchResponse): ProcessedLiveData => {
     const processedMode = match.ProvisioningFlow == "CustomGame" ? 'Custom' : gameMode(match.ModeID.split("/").pop() || '');
 
     // Transform player objects to have lowercase keys
     const processedPlayers = match.Players.map(player => ({
         subject: player.Subject,
         teamId: player.TeamID,
-        agent: agents.find(a => a.uuid == player.CharacterID) || null,
+        characterId: player.CharacterID,
         playerIdentity: {
             subject: player.PlayerIdentity.Subject,
             playerCardId: player.PlayerIdentity.PlayerCardID,
@@ -43,12 +42,9 @@ export const processLiveData = (match: CurrentMatchResponse, maps: ValorantMap[]
         isAssociated: player.IsAssociated
     }));
 
-    console.log(match.MapID);
-    console.log(maps[0].assetPath);
-    console.log(maps[0].uuid);
 
     return {
-        map: maps.find(m => m.assetPath == match.MapID) || null,
+        map: match.MapID,
         mode: processedMode,
         players: processedPlayers,
     }

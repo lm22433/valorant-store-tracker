@@ -141,11 +141,7 @@ export interface TeamInfo {
 }
 
 export interface MatchInfo {
-    playerIndex: number;
-    agentName: string;
-    agentIconUrl: string;
     mapName: string;
-    mapIconUrl: string;
     gameLengthMillis: number | null;
     gameStartMillis: number;
     queueID: string;

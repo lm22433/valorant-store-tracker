@@ -2,22 +2,28 @@ import React, { useState, useEffect, useMemo } from 'react';
 import useLiveData from '../hooks/useLiveData';
 import LoadingScreen from './common/LoadingScreen';
 import { processLiveData } from '../live/processLiveData';
-import { ValorantAgent } from '../history/types';
+import { ValorantAgent, ValorantMap } from '../history/types';
+import useMatchDetails from '../hooks/useMatchDetails';
 import { PlayerInfoResponse } from '../types';
 
 interface LiveProps {
+    user: PlayerInfoResponse | null;
+    maps: ValorantMap[];
+    agents: ValorantAgent[];
     registerRefetch: (fn: () => void) => void;
 }
 
-const Live: React.FC<LiveProps> = ({ registerRefetch }) => {
+const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
 
-    const { user, match, names, maps, agents, isLoading, error, refetch } = useLiveData();
+    const { match, names, isLoading, error, refetch } = useLiveData();
+
+    const matchDetails = match && useMatchDetails(match.MatchID);
     
     useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
     const processedMatch = useMemo(() => {
-        if (!match || !maps.length || !agents.length) return null;
-        return processLiveData(match, maps, agents);
+        if (!match) return null;
+        return processLiveData(match);
     }, [match])
 
     if (isLoading) return <LoadingScreen message="Loading your match..." />;
@@ -59,7 +65,7 @@ const Live: React.FC<LiveProps> = ({ registerRefetch }) => {
         const dd = '—';
 
         const teamClasses =
-            name == user?.acct.game_name || '' + '#' + user?.acct.tag_line || '' ? 
+            name == (user?.acct.game_name || '') + '#' + (user?.acct.tag_line || '') ? 
                 teamId === 'Blue' ? 'border-cyan-400/30 bg-gradient-to-r from-yellow-400/20 via-cyan-400/10 to-cyan-400/10'
                 : teamId === 'Red' ? 'border-rose-400/30 bg-gradient-to-r from-yellow-400/20 via-rose-500/10 to-rose-500/10'
                 : 'border-yellow-500/50 bg-yellow-500/10'
@@ -104,7 +110,7 @@ const Live: React.FC<LiveProps> = ({ registerRefetch }) => {
                 <section className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                 <div className="space-y-2">
                     <h1 className="text-3xl font-semibold text-white sm:text-4xl">Live Match</h1>
-                    <p className="text-sm text-white/60">Map: {processedMatch.map?.displayName || "Unknown"}</p>
+                    <p className="text-sm text-white/60">Map: {maps.find(m => m.uuid === processedMatch.map)?.displayName || "Unknown"}</p>
                     <p className="text-sm text-white/60">Mode: {processedMatch.mode}</p>
                 </div>
                 </section>
@@ -137,7 +143,7 @@ const Live: React.FC<LiveProps> = ({ registerRefetch }) => {
                                             key={p.subject}
                                             subject={p.subject}
                                             teamId={p.teamId}
-                                            agent={p.agent}
+                                            agent={agents.find(a => a.uuid === p.characterId) || null}
                                         />
                                     ))}
                                 </div>

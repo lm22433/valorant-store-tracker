@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
-import { ProcessedMatchData } from '../../history/types';
+import { ProcessedMatchData, ValorantAgent, ValorantMap } from '../../history/types';
+import { PlayerInfoResponse } from '../../types';
 
 
 interface MatchProps {
+    user: PlayerInfoResponse | null;
+    maps: ValorantMap[];
+    agents: ValorantAgent[];
     match: ProcessedMatchData;
 }
 
-const Match: React.FC<MatchProps> = ({match}) => {
+const Match: React.FC<MatchProps> = ({user, maps, agents,match}) => {
 
     const [expanded, setExpanded] = useState<boolean>(false);
 
-    const player = match.playerInfo[match.matchInfo.playerIndex];
+    const player = match.playerInfo.find(p => p.gameName + p.tagLine === (user?.acct.game_name || '') + (user?.acct.tag_line || ''))!;
+    const playerIndex = match.playerInfo.indexOf(player);
     const playerTeam = match.teamInfo!.find(team => player.teamId === team.teamId)!;
     const enemyTeam = match.teamInfo!.find(team => player.teamId !== team.teamId)!;
     const draw = playerTeam.roundsWon == enemyTeam.roundsWon;
+    const map = maps.find(m => m.uuid === match.matchInfo.mapName) || undefined;
+    const agent = agents.find(a => a.uuid === player.characterId) || undefined;
 
     const kda = player.stats?.kills.toString() + "/" + player.stats?.deaths.toString() + "/" + player.stats?.assists.toString();
 
@@ -43,8 +50,8 @@ const Match: React.FC<MatchProps> = ({match}) => {
         >
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <img
-                    src={match.matchInfo.mapIconUrl}
-                    alt={`${match.matchInfo.mapName} map art`}
+                    src={map?.listViewIcon || undefined}
+                    alt={`${map?.displayName || 'Unknown Map'} art`}
                     className="h-full w-full object-cover object-center opacity-40"
                 />
             </div>
@@ -55,8 +62,8 @@ const Match: React.FC<MatchProps> = ({match}) => {
                     <div className="flex items-center gap-4">
                         <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-black/40 sm:h-20 sm:w-20">
                             <img
-                                src={match.matchInfo.agentIconUrl}
-                                alt={`${match.matchInfo.agentName} portrait`}
+                                src={agent?.displayIcon || undefined}
+                                alt={`${agent?.displayName || 'Unknown Agent'} portrait`}
                                 className="h-full w-full object-contain"
                             />
                         </div>
@@ -90,7 +97,7 @@ const Match: React.FC<MatchProps> = ({match}) => {
                 </div>
 
                 <div className="flex flex-col items-end gap-2 text-right text-xs text-white/50">
-                    <span className="font-medium uppercase tracking-[0.2em]">#{match.matchInfo.playerIndex + 1} in lobby</span>
+                    <span className="font-medium uppercase tracking-[0.2em]">#{playerIndex + 1} in lobby</span>
                     <span>{new Date(match.matchInfo.gameStartMillis).toLocaleDateString()}</span>
                 </div>
             </div>
