@@ -23,7 +23,7 @@ const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }
     const processedMatches = useMemo(() => {
         if (!matches) return null;
         return matches.map(match => processHistoryData(match));
-      }, [matches]);
+    }, [matches]);
     
 
     if (isLoading) return <LoadingScreen message="Loading your matches..." />;

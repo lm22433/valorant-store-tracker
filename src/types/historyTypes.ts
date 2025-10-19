@@ -41,7 +41,7 @@ export interface TeamInfo {
 }
 
 export interface MatchInfo {
-    mapName: string;
+    mapUrl: string;
     gameLengthMillis: number | null;
     gameStartMillis: number;
     queueID: string;

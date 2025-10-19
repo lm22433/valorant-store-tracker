@@ -3,7 +3,6 @@ import useLiveData from '../hooks/useLiveData';
 import LoadingScreen from '../components/LoadingScreen';
 import { processLiveData } from '../hooks/processLiveData';
 import { ValorantAgent, ValorantMap } from '../types/assetTypes';
-// import useMatchDetails from '../hooks/useMatchDetails';
 import { PlayerInfoResponse } from '../types/responseTypes';
 
 interface LiveProps {
@@ -24,7 +23,7 @@ const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
         return processLiveData(match);
     }, [match])
 
-    const map = maps.find(m => m.displayName === processedMatch?.map) || null;
+    const map = maps.find(m => m.url === processedMatch?.mapUrl) || null;
 
     if (isLoading) return <LoadingScreen message="Loading your match..." />;
 
@@ -96,62 +95,77 @@ const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
 
     return (
         <div className="flex min-h-screen flex-col">
-            {!processedMatch ? 
-            <div className="flex min-h-[80vh] items-center justify-center">
-                <div className="flex h-[60vh] m-20 w-[80vw] items-center justify-center rounded-3xl border border-dashed border-white/15 bg-white/5 text-center backdrop-blur-xl">
-                    <div className="space-y-2">
-                        <h2 className="text-2xl font-semibold text-white">No Match to Display</h2>
-                        <p className="text-sm text-white/60">Load into a game to view match details.</p>
+            <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-10 px-4 py-10 sm:px-8 lg:px-12">
+                {!processedMatch ? 
+                <div className="flex min-h-[80vh] items-center justify-center">
+                    <div className="flex h-[60vh] m-20 w-[80vw] items-center justify-center rounded-3xl border border-dashed border-white/15 bg-white/5 text-center backdrop-blur-xl">
+                        <div className="space-y-2">
+                            <h2 className="text-2xl font-semibold text-white">No Match to Display</h2>
+                            <p className="text-sm text-white/60">Load into a game to view match details.</p>
+                        </div>
                     </div>
                 </div>
-                </div>
-            :
-            <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-10 px-4 py-10 sm:px-8 lg:px-12">
-                <section className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                <div className="space-y-2">
-                    <h1 className="text-3xl font-semibold text-white sm:text-4xl">Live Match</h1>
-                    <p className="text-sm text-white/60">Map: {map?.displayName || "Unknown Map"}</p>
-                    <p className="text-sm text-white/60">Mode: {processedMatch.mode}</p>
-                </div>
-                </section>
-                
-                <section className="w-full">
-                    {processedMatch && processedMatch.players && processedMatch.players.length > 0 && (
-                        <div className="w-full rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-lg">
-                            <div className="flex items-center justify-between border-b border-white/10 p-4">
-                                <div>
-                                    <h3 className="text-xl font-semibold text-white">Match Players</h3>
-                                    <p className="text-sm text-white/60">Live statistics unavailable during match</p>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-lg font-semibold text-white">In Progress</div>
-                                    <div className="text-sm text-white/60">{processedMatch.players.length} players</div>
-                                </div>
-                            </div>
+                :
+                <div>
+                    <section className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between mb-8">
+                    <div className="space-y-2">
+                        <h1 className="text-3xl font-semibold text-white sm:text-4xl">Live Match</h1>
+                        <p className="text-sm text-white/60">Map: {map?.displayName || "Unknown Map"}</p>
+                        <p className="text-sm text-white/60">Mode: {processedMatch.mode}</p>
+                    </div>
+                    </section>
+                    
+                    <section className="w-full">
+                        {processedMatch && processedMatch.players && processedMatch.players.length > 0 && (
+                            <div className="relative w-full mb-6 rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-lg overflow-hidden">
+                                <div
+                                    className="absolute inset-0 rounded-2xl pointer-events-none"
+                                    style={{
+                                        backgroundImage: `url(${map?.splash || ''})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                        opacity: 0.35,
+                                        WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0))',
+                                        maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0))'
+                                    }}
+                                />
 
-                            <div className="p-4">
-                                <div className="mb-3 grid grid-cols-6 gap-2 px-3 text-xs uppercase tracking-widest text-white/50">
-                                    <div className="col-span-2">Player</div>
-                                    <div className="text-center">K/D</div>
-                                    <div className="text-center">K/D/A</div>
-                                    <div className="text-right">DDΔ</div>
-                                    <div className="text-right">ACS</div>
+                                <div className="relative z-10">
+                                    <div className="flex items-center justify-between border-b border-white/10 p-4">
+                                        <div>
+                                            <h3 className="text-xl font-semibold text-white">Match Players</h3>
+                                            <p className="text-sm text-white/60">Live statistics unavailable during match</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-lg font-semibold text-white">In Progress</div>
+                                            <div className="text-sm text-white/60">{processedMatch.players.length} players</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-4">
+                                        <div className="mb-3 grid grid-cols-6 gap-2 px-3 text-xs uppercase tracking-widest text-white/50">
+                                            <div className="col-span-2">Player</div>
+                                            <div className="text-center">K/D</div>
+                                            <div className="text-center">K/D/A</div>
+                                            <div className="text-right">DDΔ</div>
+                                            <div className="text-right">ACS</div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {processedMatch.players.map((p) => (
+                                                <PlayerRow 
+                                                    key={p.subject}
+                                                    subject={p.subject}
+                                                    teamId={p.teamId}
+                                                    agent={agents.find(a => a.uuid === p.characterId) || null}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
-                                    {processedMatch.players.map((p) => (
-                                        <PlayerRow 
-                                            key={p.subject}
-                                            subject={p.subject}
-                                            teamId={p.teamId}
-                                            agent={agents.find(a => a.uuid === p.characterId) || null}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </section>
-            </main>}
+                            </div>)}
+                    </section>
+                </div>}
+            </main>
         </div>
     );
 }

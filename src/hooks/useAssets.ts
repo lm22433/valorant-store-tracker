@@ -13,10 +13,9 @@ const useAssets = (cachedMaps: React.MutableRefObject<ValorantMap[]>, cachedAgen
             const data: ValorantAPIMapResponse = await response.json();
             if (data.status !== 200) throw new Error(`API returned status ${data.status}`);
             setMaps(data.data.map(map => ({
-                uuid: map.uuid,
-                assetPath: map.assetPath,
+                url: map.mapUrl,
                 displayName: map.displayName,
-                listViewIcon: map.splash
+                splash: map.splash
             })));
         } catch (error) {
             console.error('Failed to fetch map data:', error);

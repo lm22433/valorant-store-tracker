@@ -1,5 +1,5 @@
 export interface ProcessedLiveData {
-  map: string;
+  mapUrl: string;
   mode: string;
   players: {
     subject: string;

@@ -20,7 +20,7 @@ const Match: React.FC<MatchProps> = ({user, maps, agents, match}) => {
     const playerTeam = match.teamInfo!.find(team => player.teamId === team.teamId)!;
     const enemyTeam = match.teamInfo!.find(team => player.teamId !== team.teamId)!;
     const draw = playerTeam.roundsWon == enemyTeam.roundsWon;
-    const map = maps.find(m => m.displayName === match.matchInfo.mapName) || null;
+    const map = maps.find(m => m.url === match.matchInfo.mapUrl) || null;
     const agent = agents.find(a => a.uuid === player.characterId) || null;
 
     const kda = player.stats?.kills.toString() + "/" + player.stats?.deaths.toString() + "/" + player.stats?.assists.toString();
@@ -51,7 +51,7 @@ const Match: React.FC<MatchProps> = ({user, maps, agents, match}) => {
         >
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <img
-                    src={map?.listViewIcon || undefined}
+                    src={map?.splash || undefined}
                     alt={`${map?.displayName || 'Unknown Map'} Art`}
                     className="h-full w-full object-cover object-center opacity-40"
                 />
