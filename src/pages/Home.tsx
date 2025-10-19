@@ -63,7 +63,7 @@ const HomeExtras: React.FC<{
                                     ? 'border-emerald-500/40 bg-emerald-500/10'
                                     : 'border-rose-500/40 bg-rose-500/10';
                             return (
-                                <div key={m.gameStartMillis} className={`h-15 grid grid-cols-7 items-center rounded-lg border px-3 py-2 text-m text-white/80 ${resultClass}`}>
+                                <div key={m.gameStartMillis} className={`h-14 grid grid-cols-7 items-center rounded-lg border px-3 py-2 text-m text-white/80 ${resultClass}`}>
                                     <div className="flex items-center gap-2 truncate">
                                         <img src={rank?.smallIcon || undefined} alt={(rank?.tierName || '' + rank?.divisionName) || 'Unranked'} className="h-9 w-9 rounded-sm object-contain" />
                                         <span className='font-mono text-white truncate'>{rrText}</span>

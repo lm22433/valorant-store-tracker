@@ -31,7 +31,7 @@ const processHistoryData = (
     const enemyTeam = matchResponse.teams!.find(team => playerInfo[playerIndex].teamId !== team.teamId)!;
 
     return {
-        result: playerTeam.won && enemyTeam.won ? DRAW : playerTeam.won ? WIN : LOSS,
+        result: !playerTeam.won && !enemyTeam.won ? DRAW : playerTeam.won ? WIN : LOSS,
         mapUrl: matchResponse.matchInfo.mapId,
         gameLengthMillis: matchResponse.matchInfo.gameLengthMillis,
         gameStartMillis: matchResponse.matchInfo.gameStartMillis,

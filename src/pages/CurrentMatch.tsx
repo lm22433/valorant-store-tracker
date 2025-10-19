@@ -54,8 +54,8 @@ const Live: React.FC = () => {
 
         const teamClasses =
             subject === user?.sub ? 
-                teamId === 'Blue' ? 'border-cyan-400/30 bg-gradient-to-r from-yellow-400/20 via-cyan-400/10 to-cyan-400/10'
-                : teamId === 'Red' ? 'border-rose-400/30 bg-gradient-to-r from-yellow-400/20 via-rose-500/10 to-rose-500/10'
+                teamId === 'Blue' ? 'border-cyan-400/30 bg-gradient-to-r from-yellow-400/30 via-cyan-400/10 to-cyan-400/10'
+                : teamId === 'Red' ? 'border-rose-400/30 bg-gradient-to-r from-yellow-400/30 via-rose-500/10 to-rose-500/10'
                 : 'border-yellow-500/50 bg-yellow-500/10'
             : teamId === 'Blue' ? 'border-cyan-400/30 bg-cyan-400/10'
             : teamId === 'Red' ? 'border-rose-400/30 bg-rose-500/10'
