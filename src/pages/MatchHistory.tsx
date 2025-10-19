@@ -1,24 +1,16 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import Match from '../components/Match';
 import useHistoryData from '../hooks/useHistoryData';
 import LoadingScreen from '../components/LoadingScreen';
 import { processHistoryData } from '../hooks/processHistoryData';
-import { ValorantAgent, ValorantMap } from '../types/assetTypes';
-import { PlayerInfoResponse } from '../types/responseTypes';
+import useUserData from '../hooks/useUserData';
 
-interface HistoryProps {
-    user: PlayerInfoResponse | null;
-    maps: ValorantMap[];
-    agents: ValorantAgent[];
-    registerRefetch: (fn: () => void) => void;
-}
+const History: React.FC = () => {
 
-const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }) => {
+    const { user, isLoading: isUserLoading, error: userError, refetch: refetchUser } = useUserData();
 
     const [queueID, setQueueID] = useState<string>("");
-    const { matches, isLoading, error, refetch } = useHistoryData(queueID);
-    
-    useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
+    const { matches, isLoading: isHistoryLoading, error: historyError, refetch: refetchHistory } = useHistoryData(queueID, 15);
 
     const processedMatches = useMemo(() => {
         if (!matches || !user) return null;
@@ -26,15 +18,15 @@ const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }
     }, [matches, user]);
 
 
-    if (isLoading) return <LoadingScreen message="Loading your matches..." />;
+    if (isHistoryLoading || isUserLoading) return <LoadingScreen message="Loading your matches..." />;
 
-    if (error) {
+    if (historyError || userError) {
         return (
         <div className="flex min-h-screen items-center justify-center px-6">
             <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-10 text-center shadow-2xl backdrop-blur-2xl">
             <h2 className="text-2xl font-semibold text-white">Something went wrong</h2>
-                <p className="mt-3 text-white/70">{error}</p>
-            <button onClick={refetch} className="mt-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-[#ff4655] to-[#ff6b35] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(255,70,85,0.3)] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/60 focus:ring-offset-2 focus:ring-offset-transparent">Try Again</button>
+                <p className="mt-3 text-white/70">{historyError || userError}</p>
+            <button onClick={() => { void Promise.all([refetchHistory(), refetchUser()]); }} className="mt-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-[#ff4655] to-[#ff6b35] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(255,70,85,0.3)] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/60 focus:ring-offset-2 focus:ring-offset-transparent">Try Again</button>
             </div>
         </div>
         );
@@ -72,9 +64,6 @@ const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }
                     {processedMatches && processedMatches.length > 0 ?
                         processedMatches.map((match) => (
                             <Match
-                                user={user}
-                                maps={maps}
-                                agents={agents}
                                 key={`${match.gameStartMillis}-${match.queueID}`}
                                 match={match}
                             />

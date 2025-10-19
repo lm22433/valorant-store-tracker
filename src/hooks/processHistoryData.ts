@@ -21,7 +21,7 @@ export const processHistoryData = (
 
     playerInfo = playerInfo.sort((b,a) => a.stats && b.stats ? a.stats.score - b.stats.score : 1);
 
-    const playerIndex = playerInfo.findIndex(player => (player.gameName + player.tagLine) === (user.acct.game_name + user.acct.tag_line))!;
+    const playerIndex = playerInfo.findIndex(p => p.subject === user.sub)!;
     const playerTeam = matchResponse.teams!.find(team => playerInfo[playerIndex].teamId === team.teamId)!;
     const enemyTeam = matchResponse.teams!.find(team => playerInfo[playerIndex].teamId !== team.teamId)!;
 

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { PlayerInfoResponse } from '../types/responseTypes';
 
 interface Props {
-  user: PlayerInfoResponse | null;
+  user: PlayerInfoResponse | undefined;
   onRefresh: () => void;
   onHome: () => void;
   onLogout: () => void;

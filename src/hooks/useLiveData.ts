@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { useQuery } from '@tanstack/react-query';
 import { CurrentMatchResponse, NameServiceResponse } from '../types/responseTypes';
 
 interface UseLiveDataResult {
@@ -11,35 +11,34 @@ interface UseLiveDataResult {
 }
 
 export const useLiveData = (): UseLiveDataResult => {
-    const [match, setMatch] = useState<CurrentMatchResponse | null>(null);
-	const [names, setNames] = useState<NameServiceResponse | null>(null);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<String | null>(null);
+	const matchQuery = useQuery({
+		queryKey: ['live', 'match'],
+		queryFn: async () => invoke<CurrentMatchResponse>('get_current_match'),
+		refetchInterval: 5000,
+		staleTime: 3000,
+		retry: 1,
+	});
 
-	const fetchData = useCallback(async () => {
-		try {
-			setIsLoading(true);
-			setError(null);
-			const matchResponse = await invoke<CurrentMatchResponse>('get_current_match');
-            setMatch(matchResponse);
-			const nameResponse = await invoke<NameServiceResponse>('get_game_name', { puuids: matchResponse.Players.map(p => p.Subject) });
-			setNames(nameResponse);
-		} catch (error) {
-			console.error('Failed to fetch match:', error);
-			setError(error instanceof Error ? error.message : typeof(error) === 'string' ? error : 'Failed to fetch match');
-		} finally {
-			setIsLoading(false);
-		}
-	}, []);
+	const namesQuery = useQuery({
+		queryKey: ['live', 'names', matchQuery.data?.MatchID ?? 'none'],
+		enabled: !!matchQuery.data,
+		queryFn: async () => invoke<NameServiceResponse>('get_game_name', { puuids: matchQuery.data!.Players.map(p => p.Subject) }),
+		staleTime: 3000,
+		retry: 1,
+	});
 
-	const fetched = useRef(false);
-	useEffect(() => {
-		if (fetched.current) return;
-		fetched.current = true;
-		fetchData();
-	}, [fetchData]);
+	const isLoading = matchQuery.isLoading || (namesQuery.isLoading && !!matchQuery.data);
+	const error = (matchQuery.error || namesQuery.error) ? ((matchQuery.error || namesQuery.error) instanceof Error ? (matchQuery.error || namesQuery.error as any).message : 'Failed to fetch match') : null;
 
-	return { match, names, isLoading, error, refetch: fetchData };
+	error && console.log('useLiveData error:', error);
+
+	return {
+		match: matchQuery.data ?? null,
+		names: namesQuery.data ?? null,
+		isLoading,
+		error,
+		refetch: () => { void Promise.all([matchQuery.refetch(), namesQuery.refetch()]); }
+	};
 };
 
 export default useLiveData;

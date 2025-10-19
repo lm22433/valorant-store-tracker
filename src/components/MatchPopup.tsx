@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ProcessedHistoryData, WIN, DRAW, PlayerInfo } from '../types/historyTypes';
-import { PlayerInfoResponse } from '../types/responseTypes';
-import { ValorantAgent, ValorantMap } from '../types/assetTypes';
+import useAssets from '../hooks/useAssets';
 
 type MatchPopupProps = {
     user: PlayerInfo;
-    maps: ValorantMap[];
-    agents: ValorantAgent[];
     match: ProcessedHistoryData;
     isOpen: boolean;
     onClose: () => void;
 };
 
-const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOpen, onClose }) => {
+const MatchPopup: React.FC<MatchPopupProps> = ({ user, match, isOpen, onClose }) => {
+
+    const { maps, agents, isLoading: isAssetsLoading, error: assetsError } = useAssets();
+
+    if (isAssetsLoading) return <div>Loading...</div>;
+    if (assetsError || !maps || !agents) return <div>Error loading match data.</div>;
+
     const [visible, setVisible] = useState(false);
+
     useEffect(() => {
         if (!isOpen) return;
         const onKey = (e: KeyboardEvent) => {
@@ -35,8 +39,8 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOp
     const resultLabel = match.result === DRAW ? 'Draw' : match.result === WIN ? 'Victory' : 'Defeat';
     const resultClass = match.result === DRAW ? 'text-white' : match.result === WIN ? 'text-teal-400' : 'text-rose-400';
 
-    const map = maps.find(m => m.url === match.mapUrl) || null;
-    const userAgent = agents.find(a => a.uuid === user.characterId) || null;
+    const map = maps?.find(m => m.url === match.mapUrl) || null;
+    const userAgent = agents?.find(a => a.uuid === user.characterId) || null;
 
     // Precompute damage dealt per round by subject and damage received per round per subject
     const dealtBy: Record<string, Record<number, number>> = {};
@@ -87,7 +91,7 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOp
         const kd = d === 0 ? (k > 0 ? '∞' : '0.00') : (k / d).toFixed(2);
         const dd = computeDamageDelta(subject, stats?.roundsPlayed);
 
-        const agent = agents.find(a => a.uuid === characterId) || null;
+        const agent = agents?.find(a => a.uuid === characterId) || null;
 
         const teamClasses =
             subject == user.subject ? 

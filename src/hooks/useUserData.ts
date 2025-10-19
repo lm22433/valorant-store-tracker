@@ -1,31 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { useQuery } from '@tanstack/react-query';
 import { PlayerInfoResponse } from '../types/responseTypes';
 
 export const useUserData = () => {
-    const [user, setUser] = useState<PlayerInfoResponse | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+    const query = useQuery({
+        queryKey: ['user'],
+        queryFn: async () => invoke<PlayerInfoResponse>('get_account_info_command'),
+        staleTime: 5 * 60 * 1000, // 5 minutes
+    });
 
-    const fetchData = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            const userInfo = await invoke<PlayerInfoResponse>('get_account_info_command');
-            setUser(userInfo);
-        } catch (error) {
-            console.error('Failed to fetch user data:', error);
-            setError(error instanceof Error ? error.message : typeof(error) === 'string' ? error : 'Failed to fetch user data');
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
-    
-    useEffect(() => {
-        fetchData();
-    }, [fetchData]);
-
-    return { user, isLoading, error, refetch: fetchData };
+    const error = query.error ? (query.error instanceof Error ? query.error.message : 'Failed to fetch user data') : null;
+    return { user: query.data ?? undefined, isLoading: query.isLoading, error, refetch: () => { void query.refetch(); } };
 }
 
 export default useUserData;

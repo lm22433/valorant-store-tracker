@@ -1,52 +1,47 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import useLiveData from '../hooks/useLiveData';
 import LoadingScreen from '../components/LoadingScreen';
 import { processLiveData } from '../hooks/processLiveData';
-import { ValorantAgent, ValorantMap } from '../types/assetTypes';
-import { PlayerInfoResponse } from '../types/responseTypes';
+import { ValorantAgent } from '../types/assetTypes';
+import useAssets from '../hooks/useAssets';
+import useUserData from '../hooks/useUserData';
 
-interface LiveProps {
-    user: PlayerInfoResponse | null;
-    maps: ValorantMap[];
-    agents: ValorantAgent[];
-    registerRefetch: (fn: () => void) => void;
-}
+const Live: React.FC = () => {
 
-const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
-
-    const { match, names, isLoading, error, refetch } = useLiveData();
-    
-    useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
+    const { match, names, isLoading: isMatchLoading, error: matchError } = useLiveData();
+    const { user, isLoading: isUserLoading, error: userError } = useUserData();
+    const { maps, agents, isLoading: isAssetsLoading, error: assetsError } = useAssets();
 
     const processedMatch = useMemo(() => {
         if (!match) return null;
         return processLiveData(match);
     }, [match])
 
-    const map = maps.find(m => m.url === processedMatch?.mapUrl) || null;
+    const map = maps?.find(m => m.url === processedMatch?.mapUrl) || null;
 
-    if (isLoading) return <LoadingScreen message="Loading your match..." />;
+    if (isMatchLoading || isUserLoading || isAssetsLoading) return <LoadingScreen message="Loading your match..." />;
 
-    if (error) {
-        // If error is an object with code 404, or error string contains '404', show 'No current match'
-        if ((typeof error === 'object' && (error as any).code === 404) || (typeof error === 'string' && error.includes('404'))) {
-            return (
-                <div className="flex min-h-[80vh] items-center justify-center">
-                <div className="flex h-[60vh] m-20 w-[80vw] items-center justify-center rounded-3xl border border-dashed border-white/15 bg-white/5 text-center backdrop-blur-xl">
-                    <div className="space-y-2">
-                        <h2 className="text-2xl font-semibold text-white">No Match to Display</h2>
-                        <p className="text-sm text-white/60">Load into a game to view match details.</p>
-                    </div>
+    if (!match) {
+        return (
+            <div className="flex min-h-[80vh] items-center justify-center">
+            <div className="flex h-[60vh] m-20 w-[80vw] items-center justify-center rounded-3xl border border-dashed border-white/15 bg-white/5 text-center backdrop-blur-xl">
+                <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold text-white">No Match to Display</h2>
+                    <p className="text-sm text-white/60">Load into a game to view match details.</p>
                 </div>
-                </div>
-            );
-        }
+            </div>
+            </div>
+        );
+    }
+
+    if (matchError || userError || assetsError) {
+        // Show friendly "no match" state when notFound is true
         return (
         <div className="flex min-h-screen items-center justify-center px-6">
             <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-10 text-center shadow-2xl backdrop-blur-2xl">
             <h2 className="text-2xl font-semibold text-white">Something went wrong</h2>
-                <p className="mt-3 text-white/70">{error}</p>
-            <button onClick={refetch} className="mt-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-[#ff4655] to-[#ff6b35] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(255,70,85,0.3)] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/60 focus:ring-offset-2 focus:ring-offset-transparent">Try Again</button>
+                <p className="mt-3 text-white/70">{matchError || userError || assetsError}</p>
+            <button onClick={() => window.location.reload()} className="mt-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-[#ff4655] to-[#ff6b35] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(255,70,85,0.3)] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/60 focus:ring-offset-2 focus:ring-offset-transparent">Try Again</button>
             </div>
         </div>
         );
@@ -64,7 +59,7 @@ const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
         const dd = '—';
 
         const teamClasses =
-            name == (user?.acct.game_name || '') + '#' + (user?.acct.tag_line || '') ? 
+            subject === user?.sub ? 
                 teamId === 'Blue' ? 'border-cyan-400/30 bg-gradient-to-r from-yellow-400/20 via-cyan-400/10 to-cyan-400/10'
                 : teamId === 'Red' ? 'border-rose-400/30 bg-gradient-to-r from-yellow-400/20 via-rose-500/10 to-rose-500/10'
                 : 'border-yellow-500/50 bg-yellow-500/10'
@@ -124,7 +119,7 @@ const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
                                         backgroundImage: `url(${map?.splash || ''})`,
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
-                                        opacity: 0.35,
+                                        opacity: 0.15,
                                         WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0))',
                                         maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0))'
                                     }}
@@ -156,7 +151,7 @@ const Live: React.FC<LiveProps> = ({ user, maps, agents, registerRefetch }) => {
                                                     key={p.subject}
                                                     subject={p.subject}
                                                     teamId={p.teamId}
-                                                    agent={agents.find(a => a.uuid === p.characterId) || null}
+                                                    agent={agents?.find(a => a.uuid === p.characterId) || null}
                                                 />
                                             ))}
                                         </div>

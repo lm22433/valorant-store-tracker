@@ -9,6 +9,7 @@ use tauri::Manager;
 pub struct GetHistoryDataArgs {
     #[serde(rename = "queueId")]
     queue_id: String,
+    count: u8,
 }
 
 #[tauri::command]
@@ -31,7 +32,7 @@ pub async fn get_history_data(app: tauri::AppHandle, args: GetHistoryDataArgs) -
             &account_info.affinity,
             &puuid,
             "0",
-            "20",
+            &args.count.to_string(),
             &args.queue_id,
             client_platform,
             &client_version,

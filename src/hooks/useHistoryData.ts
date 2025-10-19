@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { useQuery } from '@tanstack/react-query';
 import { MatchDetailsResponse, MatchHistoryResponse } from '../types/responseTypes';
 
 interface UseHistoryDataResult {
@@ -9,38 +9,37 @@ interface UseHistoryDataResult {
 	refetch: () => void;
 }
 
-export const useHistoryData = (queueId: string): UseHistoryDataResult => {
-	const [matches, setMatches] = useState<MatchDetailsResponse[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<String | null>(null);
+export const useHistoryData = (queueId: string, count: number): UseHistoryDataResult => {
+	const historyQuery = useQuery({
+		queryKey: ['history', 'queue', queueId, count.toString()],
+		queryFn: async () => invoke<MatchHistoryResponse>('get_history_data', { args: { queueId, count } }),
+		staleTime: 60 * 1000,
+	});
 
-	const fetchData = useCallback(async () => {
-		try {
-			setIsLoading(true);
-			setError(null);
-			const historyResponse = await invoke<MatchHistoryResponse>('get_history_data', {args: {queueId: queueId}})
-			const matchDetailsList = await Promise.all(
-				historyResponse.History.map(match =>
-					invoke<MatchDetailsResponse>('get_match_data', {args: {matchId: match.MatchID}})
-				)
-			);
-			setMatches(matchDetailsList);
-		} catch (error) {
-			console.error('Failed to fetch match history:', error);
-			setError(error instanceof Error ? error.message : typeof(error) === 'string' ? error : 'Failed to fetch match history');
-		} finally {
-			setIsLoading(false);
-		}
-	}, [queueId]);
+	const detailsQuery = useQuery({
+		queryKey: ['history', 'details', queueId, historyQuery.data?.History?.map(h => h.MatchID) ?? []],
+		enabled: !!historyQuery.data && historyQuery.data.History.length > 0,
+		queryFn: async () => {
+			const ids = historyQuery.data!.History.map(h => h.MatchID);
+			// Limit parallelization to be polite
+			const limit = 4;
+			const results: MatchDetailsResponse[] = [];
+			for (let i = 0; i < ids.length; i += limit) {
+				const chunk = ids.slice(i, i + limit);
+				const res = await Promise.all(chunk.map(id => invoke<MatchDetailsResponse>('get_match_data', { args: { matchId: id } })));
+				results.push(...res);
+			}
+			return results;
+		},
+		staleTime: 5 * 60 * 1000,
+	});
 
-	const lastQueueID = useRef<string | null>(null);
-	useEffect(() => {
-		if (lastQueueID.current === queueId) return;
-		lastQueueID.current = queueId;
-		fetchData();
-	}, [fetchData]);
+	const isLoading = historyQuery.isLoading || detailsQuery.isLoading;
+	const anyErr = (historyQuery.error || detailsQuery.error) as unknown;
+	const error = anyErr ? (anyErr instanceof Error ? anyErr.message : 'Failed to fetch match history') : null;
+	const matches = detailsQuery.data ?? [];
 
-	return { matches, isLoading, error, refetch: fetchData };
+	return { matches, isLoading, error, refetch: () => { void Promise.all([historyQuery.refetch(), detailsQuery.refetch()]); } };
 };
 
 export default useHistoryData;
