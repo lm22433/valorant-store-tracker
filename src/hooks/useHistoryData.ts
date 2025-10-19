@@ -20,6 +20,7 @@ const processHistoryData = (
         stats: player.stats,
         roundDamage: player.roundDamage,
         competitiveTier: player.competitiveTier,
+		competitiveUpdate: mmrResponse?.RankedRatingEarned,
         accountLevel: player.accountLevel,
     }));
 

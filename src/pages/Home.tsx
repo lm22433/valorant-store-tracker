@@ -16,7 +16,7 @@ const HomeExtras: React.FC<{
     openHistory: () => void;
 }> = ({ userSub, openHistory }) => {
     const { matches, isLoading: isHistoryLoading, error: historyError } = useHistoryData('competitive', 15);
-    const { agents, isLoading: isAssetsLoading, error: assetsError } = useAssets();
+    const { agents, ranks, isLoading: isAssetsLoading, error: assetsError } = useAssets();
 
     return (
         <div>
@@ -38,8 +38,9 @@ const HomeExtras: React.FC<{
                     <div className="text-white/60">No matches found</div>
                 ) : (
                     <div className="space-y-2">
-                        <div className="mb-3 grid grid-cols-6 gap-2 px-3 text-xs uppercase tracking-widest text-white/50">
-                            <div className="col-span-2">Agent</div>
+                        <div className="mb-3 grid grid-cols-7 gap-2 px-3 text-xs uppercase tracking-widest text-white/50">
+                            <div className="text-left">Rank</div>
+                            <div className="text-left col-span-2">Agent</div>
                             <div className="text-center">K/D</div>
                             <div className="text-center">K/D/A</div>
                             <div className="text-right">ACS</div>
@@ -47,6 +48,9 @@ const HomeExtras: React.FC<{
                         </div>
                         {matches.slice(0, 5).map((m) => {
                             const me = m.players.find(p => p.subject === userSub);
+                            const rank = ranks?.find(r => r.tier === me?.competitiveTier) || null;
+                            const rr = me?.competitiveUpdate ?? null;
+                            const rrText = rr == null ? '—' : rr > 0 ? `+${rr}` : `${rr}`;
                             const agent = agents?.find(a => a.uuid === (me?.characterId || '')) || null;
                             const k = me?.stats?.kills ?? 0;
                             const d = me?.stats?.deaths ?? 0;
@@ -59,10 +63,14 @@ const HomeExtras: React.FC<{
                                     ? 'border-emerald-500/40 bg-emerald-500/10'
                                     : 'border-rose-500/40 bg-rose-500/10';
                             return (
-                                <div key={m.gameStartMillis} className={`grid grid-cols-6 items-center rounded-lg border px-3 py-2 text-sm text-white/80 ${resultClass}`}>
+                                <div key={m.gameStartMillis} className={`h-15 grid grid-cols-7 items-center rounded-lg border px-3 py-2 text-m text-white/80 ${resultClass}`}>
+                                    <div className="flex items-center gap-2 truncate">
+                                        <img src={rank?.smallIcon || undefined} alt={(rank?.tierName || '' + rank?.divisionName) || 'Unranked'} className="h-9 w-9 rounded-sm object-contain" />
+                                        <span className='font-mono text-white truncate'>{rrText}</span>
+                                    </div>
                                     <div className="col-span-2 flex items-center gap-2 truncate">
-                                        <img src={agent?.displayIcon || undefined} alt={agent?.displayName || 'Agent'} className="h-7 w-7 rounded-sm object-contain" />
-                                        <span className="font-medium text-white truncate">{agent?.displayName || 'Unknown Agent'}</span>
+                                        <img src={agent?.displayIcon || undefined} alt={agent?.displayName || 'Agent'} className="h-9 w-9 rounded-sm object-contain" />
+                                        <span className="font-medium text-white/80 truncate">{agent?.displayName || 'Unknown Agent'}</span>
                                     </div>
                                     <div className="text-center font-mono text-white/80">{k && d ? (d === 0 ? (k > 0 ? '∞' : '0.00') : (k/d).toFixed(2)) : '—'}</div>
                                     <div className="text-center text-white/80">{k}/{d}/{a}</div>

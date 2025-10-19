@@ -93,7 +93,7 @@ export const useStoreData = (): UseStoreDataResult => {
 		queryKey: ['store'],
 		queryFn: async () => invoke<StorefrontResponse>('get_store_data'),
 		enabled: !!skinsQuery.data,
-    	select: (data) => processStoreData(data, skinsQuery.data ?? []),	
+    	select: (data) => processStoreData(data, skinsQuery.data ?? []),
 		staleTime: 60 * 60 * 1000, // store rotates daily; 1h is safe
 	});	
 

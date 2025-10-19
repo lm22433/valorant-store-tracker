@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ValorantAgent, ValorantAPIAgentResponse, ValorantAPIMapResponse, ValorantMap } from "../types/assetTypes";
+import { ValorantAgent, ValorantAPIAgentResponse, ValorantAPIMapResponse, ValorantAPIRankResponse, ValorantMap, ValorantRank } from "../types/assetTypes";
 
 const fetchMapData = async (): Promise<ValorantMap[]> => {
     try {
@@ -35,6 +35,24 @@ const fetchAgentData = async (): Promise<ValorantAgent[]> => {
     }
 };
 
+const fetchRankData = async (): Promise<ValorantRank[]> => {
+    try {
+        const response = await fetch('https://valorant-api.com/v1/competitivetiers');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data: ValorantAPIRankResponse = await response.json();
+        if (data.status !== 200) throw new Error(`API returned status ${data.status}`);
+        let ranks = [] as ValorantRank[];
+        data.data.forEach(rank => {
+            ranks = ranks.concat(rank.tiers as ValorantRank[]);
+        });
+        return ranks;
+    } catch (error) {
+        console.error('Failed to fetch rank data:', error);
+        throw error;
+    }
+}
+
+
 // React Query-powered assets hook (parameterless)
 const useAssets = () => {
     const mapsQuery = useQuery<ValorantMap[]>({
@@ -51,12 +69,20 @@ const useAssets = () => {
         gcTime: 7 * 24 * 60 * 60 * 1000,
     });
 
+    const ranksQuery = useQuery<ValorantRank[]>({
+        queryKey: ["assets", "ranks"],
+        queryFn: fetchRankData,
+        staleTime: 24 * 60 * 60 * 1000,
+        gcTime: 7 * 24 * 60 * 60 * 1000,
+    });
+
     return {
         maps: mapsQuery.data ?? [],
         agents: agentsQuery.data ?? [],
-        isLoading: mapsQuery.isLoading || agentsQuery.isLoading,
-        error: (mapsQuery.error || agentsQuery.error) ? ((mapsQuery.error || agentsQuery.error) instanceof Error ? (mapsQuery.error || agentsQuery.error as any).message : 'Failed to fetch assets') : null,
-        refetch: () => { void Promise.all([mapsQuery.refetch(), agentsQuery.refetch()]); }
+        ranks: ranksQuery.data ?? [],
+        isLoading: mapsQuery.isLoading || agentsQuery.isLoading || ranksQuery.isLoading,
+        error: (mapsQuery.error || agentsQuery.error || ranksQuery.error) ? ((mapsQuery.error || agentsQuery.error || ranksQuery.error) instanceof Error ? (mapsQuery.error || agentsQuery.error || ranksQuery.error as any).message : 'Failed to fetch assets') : null,
+        refetch: () => { void Promise.all([mapsQuery.refetch(), agentsQuery.refetch(), ranksQuery.refetch()]); }
     };
 };
 

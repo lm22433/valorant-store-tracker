@@ -29,6 +29,7 @@ export interface PlayerInfo {
         damage: number;
     }[] | null;
     competitiveTier: number;
+    competitiveUpdate: number | undefined;
     accountLevel: number;
 }
 
