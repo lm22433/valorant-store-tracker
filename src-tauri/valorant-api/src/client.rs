@@ -1,7 +1,8 @@
-use crate::endpoints::{match_history_url, match_details_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
+use crate::endpoints::{match_history_url, match_details_url, wallet_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
 use crate::errors::ValorantApiError;
 use crate::http::HttpClient;
-use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse, MatchDetailsResponse};
+
+use crate::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse, MatchDetailsResponse, WalletResponse};
 
 pub struct ValorantApiClient<C: HttpClient> {
     http_client: C,
@@ -117,8 +118,25 @@ impl<C: HttpClient> ValorantApiClient<C> {
         Ok(body)
     }
 
-    pub async fn get_wallet(&self) {
-        unimplemented!()
+    pub async fn get_wallet(&self,
+                            shard: &str,
+                            puuid: &str,
+                            client_platform: &str,
+                            client_version: &str,
+                            entitlement_token: &str,
+                            auth_token: &str,
+    ) -> Result<WalletResponse, ValorantApiError> {
+        let url = wallet_url(shard, puuid);
+        let resp = self.http_client
+            .get(url)
+            .bearer_auth(auth_token)
+            .header("X-Riot-ClientPlatform", client_platform)
+            .header("X-Riot-ClientVersion", client_version)
+            .header("X-Riot-Entitlements-JWT", entitlement_token)
+            .send()
+            .await?;
+        let body = resp.json::<WalletResponse>()?;
+        Ok(body)
     }
 
     pub async fn get_owned_items(&self) {

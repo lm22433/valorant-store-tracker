@@ -1,6 +1,78 @@
 import { StorefrontResponse } from '../types';
 
-export interface ValorantSkin {
+export interface ValorantAPIResponse<T = unknown> {
+  status: number;
+  data: T;
+}
+
+export interface ValorantBuddy {
+  uuid: string;
+  displayName: string;
+  isHiddenIfNotOwned: boolean;
+  themeUuid: string;
+  displayIcon: string;
+  assetPath: string;
+  levels: {
+    uuid: string;
+    charmLevel: number;
+    hideIfNotOwned: boolean;
+    displayName: string;
+    displayIcon: string;
+    assetPath: string;
+  }[];
+}
+
+export type ValorantAPIBuddiesResponse = ValorantAPIResponse<ValorantBuddy[]>;
+
+export interface ValorantPlayerCard {
+  uuid: string;
+  displayName: string;
+  isHiddenIfNotOwned: boolean;
+  themeUuid: string;
+  displayIcon: string;
+  smallArt: string;
+  wideArt: string;
+  largeArt: string
+  assetPath: string;
+}
+
+export type ValorantAPIPlayerCardsResponse = ValorantAPIResponse<ValorantPlayerCard[]>;
+
+export interface ValorantPlayerTitle {
+  uuid: string;
+  displayName: string;
+  titleText: string;
+  isHiddenIfNotOwned: boolean;
+  assetPath: string;
+}
+
+export type ValorantAPIPlayerTitlesResponse = ValorantAPIResponse<ValorantPlayerTitle[]>;
+
+export interface ValorantSpray {
+  uuid: string;
+  displayName: string;
+  category: string;
+  themeUuid: string;
+  isNullSpray: boolean;
+  hideIfNotOwned: boolean;
+  displayIcon: string;
+  fullIcon: string;
+  fullTransparentIcon: string;
+  animationPng: string;
+  animationGif: string;
+  assetPath: string;
+  levels: {
+    uuid: string;
+    sprayLevel: number;
+    displayName: string;
+    displayIcon: string;
+    assetPath: string;
+  }[];
+}
+
+export type ValorantAPISpraysResponse = ValorantAPIResponse<ValorantSpray[]>;
+
+export interface ValorantWeaponSkin {
   uuid: string;
   displayName: string;
   themeUuid: string;
@@ -27,10 +99,7 @@ export interface ValorantSkin {
   }[];
 }
 
-export interface ValorantAPIResponse {
-  status: number;
-  data: ValorantSkin[];
-}
+export type ValorantAPIWeaponsSkinsResponse = ValorantAPIResponse<ValorantWeaponSkin[]>;
 
 export interface ProcessedStoreItem {
   uuid: string;
@@ -38,13 +107,20 @@ export interface ProcessedStoreItem {
   displayIcon: string;
   cost: number;
   category: string;
-  skinData?: ValorantSkin;
+  // Currency label to display (e.g., 'VP' or 'KC')
+  currencyLabel?: string;
+  skinData?: ValorantWeaponSkin;
+  // Night Market / discount fields
+  originalCost?: number;
+  discountPercent?: number; // integer percent without % sign
 }
 
 export interface ProcessedStoreData {
   dailyStore: ProcessedStoreItem[];
+  accessoryStore: ProcessedStoreItem[];
   nightMarket: ProcessedStoreItem[];
   timeUntilReset: number; // epoch seconds
+  nightMarketReset?: number; // epoch seconds
 }
 
 export type { StorefrontResponse };

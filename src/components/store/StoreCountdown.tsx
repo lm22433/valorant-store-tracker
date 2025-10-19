@@ -2,9 +2,11 @@ import React, { useMemo } from 'react';
 
 interface Props {
   timeRemaining: string;
+  title?: string;
+  subtitle?: string;
 }
 
-const StoreCountdown: React.FC<Props> = ({ timeRemaining }) => {
+const StoreCountdown: React.FC<Props> = ({ timeRemaining, title = 'Store Rotation', subtitle = 'Next refresh in' }) => {
   const timeUnits = useMemo(() => {
     return timeRemaining.split(':').map((unit, index) => ({
       value: unit,

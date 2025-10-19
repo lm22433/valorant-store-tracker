@@ -4,6 +4,7 @@ import useTimer from '../hooks/useTimer';
 import LoadingScreen from './common/LoadingScreen';
 import StoreCountdown from './store/StoreCountdown';
 import StoreItems from './store/StoreItems';
+import CurrencyBar from './store/CurrencyBar';
 import { processStoreData } from '../store/processStoreData';
 
 interface StoreProps {
@@ -11,16 +12,19 @@ interface StoreProps {
 }
 
 const Store: React.FC<StoreProps> = ({ registerRefetch }) => {
-  const { store, skinData, isLoading, error, refetch } = useStoreData();
+  const { store, wallet, buddyData, playerCardData, playerTitleData, sprayData, weaponSkinData, isLoading, error, refetch } = useStoreData();
 
   useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
   const processedStore = useMemo(() => {
-    if (!store || !skinData.length) return null;
-    return processStoreData(store, skinData);
-  }, [store, skinData]);
+    if (!store || !weaponSkinData.length) return null;
+    let test = processStoreData(store, weaponSkinData, buddyData, playerCardData, playerTitleData, sprayData);
+    console.log('Processed Store:', test);
+    return test;
+  }, [store, buddyData, playerCardData, playerTitleData, sprayData, weaponSkinData]);
 
   const timeRemaining = useTimer(processedStore?.timeUntilReset || 0);
+  useTimer(processedStore?.nightMarketReset || 0);
 
   if (isLoading) return <LoadingScreen message="Loading your store..." />;
 
@@ -44,10 +48,15 @@ const Store: React.FC<StoreProps> = ({ registerRefetch }) => {
   return (
     <div className="flex min-h-screen flex-col">
       <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-12 px-4 py-10 sm:px-8">
+        <CurrencyBar wallet={wallet} />
         <StoreCountdown timeRemaining={timeRemaining} />
         <section className="space-y-8">
           <h3 className="text-center text-2xl font-semibold text-white">Daily Store</h3>
           <StoreItems items={processedStore?.dailyStore || []} />
+        </section>
+        <section className="space-y-8">
+          <h3 className="text-center text-2xl font-semibold text-white">Accessory Store</h3>
+          <StoreItems items={processedStore?.accessoryStore || []} />
         </section>
         {processedStore?.nightMarket?.length ? (
           <section className="space-y-8">
