@@ -21,10 +21,10 @@ const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }
     useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
     const processedMatches = useMemo(() => {
-        if (!matches) return null;
-        return matches.map(match => processHistoryData(match));
-    }, [matches]);
-    
+        if (!matches || !user) return null;
+        return matches.map(match => processHistoryData(user, match));
+    }, [matches, user]);
+
 
     if (isLoading) return <LoadingScreen message="Loading your matches..." />;
 
@@ -72,10 +72,10 @@ const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }
                     {processedMatches && processedMatches.length > 0 ?
                         processedMatches.map((match) => (
                             <Match
-                                key={`${match.matchInfo.gameStartMillis}-${match.matchInfo.queueID}`}
                                 user={user}
                                 maps={maps}
                                 agents={agents}
+                                key={`${match.gameStartMillis}-${match.queueID}`}
                                 match={match}
                             />
                         ))
