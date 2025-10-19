@@ -1,4 +1,5 @@
 export interface ProcessedLiveData {
+  matchId: string;
   mapUrl: string;
   mode: string;
   players: {

@@ -1,20 +1,14 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import useStoreData from '../hooks/useStoreData';
 import useTimer from '../hooks/useTimer';
 import LoadingScreen from '../components/LoadingScreen';
 import StoreCountdown from '../components/StoreCountdown';
 import StoreItems from '../components/StoreItems';
-import { processStoreData } from '../hooks/processStoreData';
 
 const Store: React.FC = () => {
-  const { store, skinData, isLoading, error, refetch } = useStoreData();
+  const { store, isLoading, error, refetch } = useStoreData();
 
-  const processedStore = useMemo(() => {
-    if (!store || !skinData.length) return null;
-    return processStoreData(store, skinData);
-  }, [store, skinData]);
-
-  const timeRemaining = useTimer(processedStore?.timeUntilReset || 0);
+  const timeRemaining = useTimer(store?.timeUntilReset || 0);
 
   if (isLoading) return <LoadingScreen message="Loading your store..." />;
 
@@ -41,12 +35,12 @@ const Store: React.FC = () => {
         <StoreCountdown timeRemaining={timeRemaining} />
         <section className="space-y-8">
           <h3 className="text-center text-2xl font-semibold text-white">Daily Store</h3>
-          <StoreItems items={processedStore?.dailyStore || []} />
+          <StoreItems items={store?.dailyStore || []} />
         </section>
-        {processedStore?.nightMarket?.length ? (
+        {store?.nightMarket?.length ? (
           <section className="space-y-8">
             <h3 className="text-center text-2xl font-semibold text-white">Night Market</h3>
-            <StoreItems items={processedStore.nightMarket} />
+            <StoreItems items={store.nightMarket} />
           </section>
         ) : null}
       </main>

@@ -8,6 +8,7 @@ import useAssets from '../hooks/useAssets';
 import { useHistoryData } from '../hooks/useHistoryData';
 import { useQueryClient } from '@tanstack/react-query';
 import useUserData from '../hooks/useUserData';
+import { WIN, DRAW } from '../types/historyTypes';
 
 // Extras: Quick Stats + Recent Matches for the Home screen
 const HomeExtras: React.FC<{
@@ -51,9 +52,14 @@ const HomeExtras: React.FC<{
                             const d = me?.stats?.deaths ?? 0;
                             const a = me?.stats?.assists ?? 0;
                             const acs = me?.stats?.roundsPlayed ? Math.round((me.stats.score || 0) / me.stats.roundsPlayed) : '—';
-                            const date = new Date(m.matchInfo.gameStartMillis).toLocaleDateString();
+                            const date = new Date(m.gameStartMillis).toLocaleDateString();
+                            const resultClass = m.result === DRAW
+                                ? 'border-white/30'
+                                : m.result === WIN
+                                    ? 'border-emerald-500/40 bg-emerald-500/10'
+                                    : 'border-rose-500/40 bg-rose-500/10';
                             return (
-                                <div key={m.matchInfo.matchId} className="grid grid-cols-6 items-center rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80">
+                                <div key={m.gameStartMillis} className={`grid grid-cols-6 items-center rounded-lg border px-3 py-2 text-sm text-white/80 ${resultClass}`}>
                                     <div className="col-span-2 flex items-center gap-2 truncate">
                                         <img src={agent?.displayIcon || undefined} alt={agent?.displayName || 'Agent'} className="h-7 w-7 rounded-sm object-contain" />
                                         <span className="font-medium text-white truncate">{agent?.displayName || 'Unknown Agent'}</span>

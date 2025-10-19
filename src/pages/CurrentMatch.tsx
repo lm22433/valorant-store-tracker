@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import useLiveData from '../hooks/useLiveData';
 import LoadingScreen from '../components/LoadingScreen';
-import { processLiveData } from '../hooks/processLiveData';
 import { ValorantAgent } from '../types/assetTypes';
 import useAssets from '../hooks/useAssets';
 import useUserData from '../hooks/useUserData';
@@ -12,12 +11,7 @@ const Live: React.FC = () => {
     const { user, isLoading: isUserLoading, error: userError } = useUserData();
     const { maps, agents, isLoading: isAssetsLoading, error: assetsError } = useAssets();
 
-    const processedMatch = useMemo(() => {
-        if (!match) return null;
-        return processLiveData(match);
-    }, [match])
-
-    const map = maps?.find(m => m.url === processedMatch?.mapUrl) || null;
+    const map = maps?.find(m => m.url === match?.mapUrl) || null;
 
     if (isMatchLoading || isUserLoading || isAssetsLoading) return <LoadingScreen message="Loading your match..." />;
 
@@ -91,7 +85,7 @@ const Live: React.FC = () => {
     return (
         <div className="flex min-h-screen flex-col">
             <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-10 px-4 py-10 sm:px-8 lg:px-12">
-                {!processedMatch ? 
+                {!match ? 
                 <div className="flex min-h-[80vh] items-center justify-center">
                     <div className="flex h-[60vh] m-20 w-[80vw] items-center justify-center rounded-3xl border border-dashed border-white/15 bg-white/5 text-center backdrop-blur-xl">
                         <div className="space-y-2">
@@ -106,12 +100,12 @@ const Live: React.FC = () => {
                     <div className="space-y-2">
                         <h1 className="text-3xl font-semibold text-white sm:text-4xl">Live Match</h1>
                         <p className="text-sm text-white/60">Map: {map?.displayName || "Unknown Map"}</p>
-                        <p className="text-sm text-white/60">Mode: {processedMatch.mode}</p>
+                        <p className="text-sm text-white/60">Mode: {match.mode}</p>
                     </div>
                     </section>
                     
                     <section className="w-full">
-                        {processedMatch && processedMatch.players && processedMatch.players.length > 0 && (
+                        {match && match.players.length > 0 && (
                             <div className="relative w-full mb-6 rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-lg overflow-hidden">
                                 <div
                                     className="absolute inset-0 rounded-2xl pointer-events-none"
@@ -133,7 +127,7 @@ const Live: React.FC = () => {
                                         </div>
                                         <div className="text-right">
                                             <div className="text-lg font-semibold text-white">In Progress</div>
-                                            <div className="text-sm text-white/60">{processedMatch.players.length} players</div>
+                                            <div className="text-sm text-white/60">{match.players.length} players</div>
                                         </div>
                                     </div>
 
@@ -146,7 +140,7 @@ const Live: React.FC = () => {
                                             <div className="text-right">ACS</div>
                                         </div>
                                         <div className="space-y-2">
-                                            {processedMatch.players.map((p) => (
+                                            {match.players.map((p) => (
                                                 <PlayerRow 
                                                     key={p.subject}
                                                     subject={p.subject}
