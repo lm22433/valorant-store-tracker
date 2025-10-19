@@ -67,7 +67,7 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
                     {processedMatches && processedMatches.length > 0 ?
                         processedMatches.map((match) => (
                             <Match
-                                key={`${match.matchInfo.gameStartMillis}-${match.matchInfo.queueID}`}
+                                key={`${match.gameStartMillis}-${match.queueID}`}
                                 match={match}
                             />
                         ))
