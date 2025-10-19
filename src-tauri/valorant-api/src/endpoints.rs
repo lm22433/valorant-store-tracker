@@ -32,3 +32,26 @@ pub fn match_details_url(shard: &str, match_id: &str) -> String {
 		shard, match_id
 	)
 }
+
+#[inline]
+pub fn current_match_player_url(region: &str, shard: &str, puuid: &str) -> String {
+	format!(
+		"https://glz-{}-1.{}.a.pvp.net/core-game/v1/players/{}",
+		region, shard, puuid
+	)
+}
+
+#[inline]
+pub fn current_match_url(region: &str, shard: &str, match_id: &str) -> String {
+	format!(
+		"https://glz-{}-1.{}.a.pvp.net/core-game/v1/matches/{}",
+		region, shard, match_id
+	)
+}
+
+pub fn name_service_url(shard: &str) -> String {
+	format!(
+		"https://pd.{}.a.pvp.net/name-service/v2/players",
+		shard
+	)
+}

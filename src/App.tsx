@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import LoadingScreen from "./components/common/LoadingScreen";
-import LoginScreen from "./components/auth/LoginScreen";
-import Home from "./components/Home";
+import LoadingScreen from "./components/LoadingScreen";
+import LoginScreen from "./pages/LoginScreen";
+import Home from "./pages/Home";
 
 // App root now only handles auth gating and high-level layout
 function App() {

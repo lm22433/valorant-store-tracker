@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { ProcessedMatchData, WIN, DRAW } from '../../history/types';
+import { ProcessedHistoryData, WIN, DRAW, PlayerInfo } from '../types/historyTypes';
+import { PlayerInfoResponse } from '../types/responseTypes';
+import { ValorantAgent, ValorantMap } from '../types/assetTypes';
 
 type MatchPopupProps = {
-    match: ProcessedMatchData;
+    user: PlayerInfo;
+    maps: ValorantMap[];
+    agents: ValorantAgent[];
+    match: ProcessedHistoryData;
     isOpen: boolean;
     onClose: () => void;
 };
 
-const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
+const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOpen, onClose }) => {
     const [visible, setVisible] = useState(false);
     useEffect(() => {
         if (!isOpen) return;
@@ -29,6 +34,9 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
 
     const resultLabel = match.result === DRAW ? 'Draw' : match.result === WIN ? 'Victory' : 'Defeat';
     const resultClass = match.result === DRAW ? 'text-white' : match.result === WIN ? 'text-teal-400' : 'text-rose-400';
+
+    const map = maps.find(m => m.url === match.mapUrl) || null;
+    const userAgent = agents.find(a => a.uuid === user.characterId) || null;
 
     // Precompute damage dealt per round by subject and damage received per round per subject
     const dealtBy: Record<string, Record<number, number>> = {};
@@ -78,8 +86,11 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
         const acs = stats?.roundsPlayed ? Math.round((stats.score || 0) / stats.roundsPlayed) : '—';
         const kd = d === 0 ? (k > 0 ? '∞' : '0.00') : (k / d).toFixed(2);
         const dd = computeDamageDelta(subject, stats?.roundsPlayed);
+
+        const agent = agents.find(a => a.uuid === characterId) || null;
+
         const teamClasses =
-            subject == match.players[match.playerIndex].subject ? 
+            subject == user.subject ? 
                 teamId === 'Blue' ? 'border-cyan-400/30 bg-gradient-to-r from-yellow-400/20 via-cyan-400/10 to-cyan-400/10'
                 : teamId === 'Red' ? 'border-rose-400/30 bg-gradient-to-r from-yellow-400/20 via-rose-500/10 to-rose-500/10'
                 : 'border-yellow-500/50 bg-yellow-500/10'
@@ -90,8 +101,8 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
             <div className={`grid w-full h-14 grid-cols-6 items-center rounded-lg border px-3 py-2 text-m text-white/80 ${teamClasses}`}>
                 <div className="col-span-2 flex items-center gap-2 truncate">
                     <img
-                        src={`https://media.valorant-api.com/agents/${characterId}/displayicon.png`}
-                        alt="agent"
+                        src={agent?.displayIcon || undefined}
+                        alt={`${agent?.displayName || "Unknown Agent"} Portrait`}
                         className="h-7 w-7 rounded-sm object-contain"
                         onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }}
                     />
@@ -121,12 +132,12 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
                     <div className="relative flex items-center justify-between border-b border-white/10 p-4 gap-3">
                         <div className="flex items-center gap-3">
                             <img
-                                src={match.agentIconUrl}
-                                alt={`${match.agentName} icon`}
+                                src={userAgent?.displayIcon || undefined}
+                                alt={`${userAgent?.displayName || 'Unknown Agent'} Portrait`}
                                 className="h-8 w-8 rounded-md border border-white/10 bg-black/30 object-contain"
                             />
                             <div>
-                                <h3 className="text-xl font-semibold text-white">{match.mapName}</h3>
+                                <h3 className="text-xl font-semibold text-white">{map?.displayName || 'Unknown Map'}</h3>
                                 <p className="text-xs text-white/60">{new Date(match.gameStartMillis).toLocaleString()} • {(match.queueID.charAt(0).toUpperCase() + match.queueID.slice(1)) || 'Unknown'}</p>
                             </div>
                         </div>
@@ -143,26 +154,40 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ match, isOpen, onClose }) => {
                         </button>
                     </div>
 
-                    <div className="max-h-full overflow-auto overscroll-contain p-4">
-                        <div className="mb-3 grid grid-cols-6 gap-2 px-3 text-xs uppercase tracking-widest text-white/50">
-                            <div className="col-span-2">Player</div>
-                            <div className="text-center">K/D</div>
-                            <div className="text-center">K/D/A</div>
-                            <div className="text-right">DDΔ</div>
-                            <div className="text-right">ACS</div>
-                        </div>
-                        <div className="space-y-2">
-                            {match.players.map(p => (
-                                <PlayerRow
-                                    key={p.subject}
-                                    subject={p.subject}
-                                    name={p.gameName}
-                                    tagline={p.tagLine}
-                                    characterId={p.characterId}
-                                    teamId={p.teamId as string}
-                                    stats={p.stats}
-                                />
-                            ))}
+                    <div className="relative max-h-full overflow-auto overscroll-contain p-4">
+                        <div
+                            className="absolute inset-0 pointer-events-none"
+                            style={{
+                                backgroundImage: `url(${map?.splash || ''})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                opacity: 0.15,
+                                WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0))',
+                                maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0))'
+                            }}
+                        />
+
+                        <div className="relative z-10">
+                            <div className="mb-3 grid grid-cols-6 gap-2 px-3 text-xs uppercase tracking-widest text-white/50">
+                                <div className="col-span-2">Player</div>
+                                <div className="text-center">K/D</div>
+                                <div className="text-center">K/D/A</div>
+                                <div className="text-right">DDΔ</div>
+                                <div className="text-right">ACS</div>
+                            </div>
+                            <div className="space-y-2">
+                                {match.players.map(p => (
+                                    <PlayerRow
+                                        key={p.subject}
+                                        subject={p.subject}
+                                        name={p.gameName}
+                                        tagline={p.tagLine}
+                                        characterId={p.characterId}
+                                        teamId={p.teamId}
+                                        stats={p.stats}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

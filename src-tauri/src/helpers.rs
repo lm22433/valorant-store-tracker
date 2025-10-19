@@ -3,7 +3,7 @@ use tauri::Manager;
 use tauri_plugin_store::StoreExt;
 use valorant_api::client::ValorantApiClient;
 use valorant_api::http::reqwest::ReqwestHttpClient;
-use valorant_api::models::{EntitlementResponse, PlayerInfoResponse, RiotGeoResponse};
+use valorant_api::models::{NameServiceResponse, EntitlementResponse, PlayerInfoResponse, RiotGeoResponse};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AccountInfo {
@@ -64,6 +64,35 @@ pub async fn get_riot_geo(app: tauri::AppHandle, access_token: String, id_token:
 		.await
 		.map_err(|e| e.to_string())?;
 	Ok(geo)
+}
+
+#[tauri::command]
+pub async fn get_game_name(app: tauri::AppHandle, puuids: Vec<String>) -> Result<NameServiceResponse, String> {
+    let account_info = get_account_info(&app, None).map_err(|e| e.to_string())?;
+    let access_token = account_info.access_token.clone();
+
+    let client_platform = "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9";
+    let client_version = get_client_version().await?.data.riotClientVersion;
+
+    let entitlement_token = get_entitlements_token(app.clone(), access_token.clone())
+        .await
+        .map_err(|e| e.to_string())?
+        .entitlements_token;
+
+	let api: tauri::State<ValorantApiClient<ReqwestHttpClient>> = app.state();
+	let game_names = api
+		.get_game_name(
+			&account_info.affinity,
+			&puuids,
+			client_platform,
+			&client_version,
+			&entitlement_token,
+			&access_token
+		)
+		.await
+		.map_err(|e| e.to_string())?;
+
+	Ok(game_names)
 }
 
 #[derive(Debug, Serialize, Deserialize)]

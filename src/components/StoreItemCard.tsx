@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { ProcessedStoreItem } from '../../store/types';
+import { ProcessedStoreItem } from '../types/storeTypes';
 
 const StoreItemCard: React.FC<{ item: ProcessedStoreItem }> = ({ item }) => {
   const [imageError, setImageError] = useState(false);

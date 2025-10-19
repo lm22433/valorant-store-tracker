@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProcessedStoreItem } from '../../store/types';
+import { ProcessedStoreItem } from '../types/storeTypes';
 import StoreItemCard from './StoreItemCard';
 import StorePlaceholder from './StorePlaceholder';
 

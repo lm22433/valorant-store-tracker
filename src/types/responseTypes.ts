@@ -215,8 +215,76 @@ export const CURRENCY_IDS = {
   KINGDOM_CREDITS: "85ca954a-41f2-ce94-9b45-8ca3dd39a00d" as const,
 } as const;
 
+export interface CurrentMatchPlayerResponse {
+  /** Player UUID */
+  Subject: string;
+  /** Pre-Game Match ID */
+  MatchID: string;
+  Version: number;
+}
 
-export type MatchHistoryResponse = {
+export interface CurrentMatchResponse {
+  /** Current Game Match ID */
+  MatchID: string;
+  Version: number;
+  State: "IN_PROGRESS";
+  /** Map ID */
+  MapID: string;
+  /** Game Mode */
+  ModeID: string;
+  ProvisioningFlow: "Matchmaking" | "CustomGame";
+  GamePodID: string;
+  /** Chat room ID for "all" chat */
+  AllMUCName: string;
+  /** Chat room ID for "team" chat */
+  TeamMUCName: string;
+  TeamVoiceID: string;
+  /** JWT containing match ID, participant IDs, and match region */
+  TeamMatchToken: string;
+  IsReconnectable: boolean;
+  ConnectionDetails: {
+    GameServerHosts: string[];
+    GameServerHost: string;
+    GameServerPort: number;
+    GameServerObfuscatedIP: number;
+    GameClientHash: number;
+    PlayerKey: string;
+  };
+  PostGameDetails: null;
+  Players: {
+    /** Player UUID */
+    Subject: string;
+    TeamID: ("Blue" | "Red") | string;
+    /** Character ID */
+    CharacterID: string;
+    PlayerIdentity: {
+      /** Player UUID */
+      Subject: string;
+      /** Card ID */
+      PlayerCardID: string;
+      /** Title ID */
+      PlayerTitleID: string;
+      AccountLevel: number;
+      /** Preferred Level Border ID */
+      PreferredLevelBorderID: string | "";
+      Incognito: boolean;
+      HideAccountLevel: boolean;
+    };
+    SeasonalBadgeInfo: {
+      /** Season ID */
+      SeasonID: string | "";
+      NumberOfWins: number;
+      WinsByTier: null;
+      Rank: number;
+      LeaderboardRank: number;
+    };
+    IsCoach: boolean;
+    IsAssociated: boolean;
+  }[];
+  MatchmakingData: null;
+}
+
+export interface MatchHistoryResponse {
   /** Player UUID */
   Subject: string;
   BeginIndex: number;
@@ -225,7 +293,7 @@ export type MatchHistoryResponse = {
   History: MatchID[];
 };
 
-export type MatchID = {
+export interface MatchID {
   MatchID: string;
   /** Milliseconds since epoch */
   GameStartTime: number;
@@ -233,7 +301,7 @@ export type MatchID = {
   QueueID: string;
 }
 
-export type MatchDetailsResponse = {
+export interface MatchDetailsResponse {
     matchInfo: {
         /** Match ID */
         matchId: string;
@@ -528,3 +596,13 @@ export type MatchDetailsResponse = {
         round: number;
     }[] | null;
 };
+
+export interface NameInfo {
+    displayName: string;
+    /** Player UUID */
+    subject: string;
+    gameName: string;
+    tagLine: string;
+};
+
+export type NameServiceResponse = NameInfo[]

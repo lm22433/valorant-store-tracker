@@ -1,10 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import Store from './Store';
 import Live from './CurrentMatch';
 import History from './MatchHistory';
-import Header from './common/Header';
-import LoadingScreen from './common/LoadingScreen';
+import Header from '../components/Header';
+import LoadingScreen from '../components/LoadingScreen';
 import useUserData from '../hooks/useUserData';
+import useAssets from '../hooks/useAssets';
+import { ValorantAgent, ValorantMap } from '../types/assetTypes';
 
 interface HomeProps {
     setLoggedIn: (loggedIn: boolean) => void;
@@ -19,9 +21,12 @@ const Home: React.FC<HomeProps> = ({ setLoggedIn }) => {
         History
     }
     
+    const cachedMaps = useRef<ValorantMap[]>([]);
+    const cachedAgents = useRef<ValorantAgent[]>([]);
     const [content, setContent] = useState(Content.Empty);
     const [activeContentRefetch, setActiveContentRefetch] = useState<(() => void) | null>(null);
     const { user, isLoading, error, refetch } = useUserData();
+    const { maps, agents } = useAssets(cachedMaps, cachedAgents);
 
     const handleHome = () => {
         setContent(Content.Empty);
@@ -71,9 +76,9 @@ const Home: React.FC<HomeProps> = ({ setLoggedIn }) => {
                     case Content.Store:
                         return <Store registerRefetch={setActiveContentRefetch}/>;
                     case Content.Live:
-                        return <Live/>;
+                        return <Live user={user} maps={maps} agents={agents} registerRefetch={setActiveContentRefetch}/>;
                     case Content.History:
-                        return <History registerRefetch={setActiveContentRefetch}/>;
+                        return <History user={user} maps={maps} agents={agents} registerRefetch={setActiveContentRefetch}/>;
                     default:
                         return <></>;
                 }

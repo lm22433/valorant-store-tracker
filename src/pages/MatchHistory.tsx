@@ -1,25 +1,30 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import Match from './history/Match';
+import Match from '../components/Match';
 import useHistoryData from '../hooks/useHistoryData';
-import LoadingScreen from './common/LoadingScreen';
-import { processMatchData } from '../history/processHistoryData';
+import LoadingScreen from '../components/LoadingScreen';
+import { processHistoryData } from '../hooks/processHistoryData';
+import { ValorantAgent, ValorantMap } from '../types/assetTypes';
+import { PlayerInfoResponse } from '../types/responseTypes';
 
 interface HistoryProps {
+    user: PlayerInfoResponse | null;
+    maps: ValorantMap[];
+    agents: ValorantAgent[];
     registerRefetch: (fn: () => void) => void;
 }
 
-const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
+const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }) => {
 
     const [queueID, setQueueID] = useState<string>("");
-    const { user, matches, maps, agents, isLoading, error, refetch } = useHistoryData(queueID);
+    const { matches, isLoading, error, refetch } = useHistoryData(queueID);
     
     useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
 
     const processedMatches = useMemo(() => {
-        if (!matches || !user || !maps.length || !agents.length) return null;
-        return matches.map(match => processMatchData(match, user, maps, agents));
-      }, [matches]);
-    
+        if (!matches || !user) return null;
+        return matches.map(match => processHistoryData(user, match));
+    }, [matches, user]);
+
 
     if (isLoading) return <LoadingScreen message="Loading your matches..." />;
 
@@ -67,6 +72,9 @@ const History: React.FC<HistoryProps> = ({ registerRefetch }) => {
                     {processedMatches && processedMatches.length > 0 ?
                         processedMatches.map((match) => (
                             <Match
+                                user={user}
+                                maps={maps}
+                                agents={agents}
                                 key={`${match.gameStartMillis}-${match.queueID}`}
                                 match={match}
                             />

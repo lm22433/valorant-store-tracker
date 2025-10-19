@@ -7,6 +7,21 @@ pub struct EntitlementResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct NameInfo {
+    #[serde(rename(serialize = "displayName", deserialize = "DisplayName"))]
+    display_name: String,
+    /// Player UUID
+    #[serde(rename(serialize = "subject", deserialize = "Subject"))]
+    subject: String,
+    #[serde(rename(serialize = "gameName", deserialize = "GameName"))]
+    game_name: String,
+    #[serde(rename(serialize = "tagLine", deserialize = "TagLine"))]
+    tag_line: String,
+}
+
+pub type NameServiceResponse = Vec<NameInfo>;
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerInfoResponse {
     pub country: String,
     pub sub: String,
@@ -394,6 +409,134 @@ pub struct MatchID {
 }
 
 // CHATGPT CODE
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CurrentMatchPlayerResponse {
+    /// Player UUID
+    #[serde(rename = "Subject")]
+    pub subject: String,
+    /// Pre-Game Match ID
+    #[serde(rename = "MatchID")]
+    pub match_id: String,
+    #[serde(rename = "Version")]
+    pub version: u64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CurrentMatchResponse {
+    /// Current Game Match ID
+    #[serde(rename = "MatchID")]
+    pub match_id: String,
+    #[serde(rename = "Version")]
+    pub version: u64,
+    #[serde(rename = "State")]
+    pub state: String, // "IN_PROGRESS"
+    /// Map ID
+    #[serde(rename = "MapID")]
+    pub map_id: String,
+    /// Game Mode
+    #[serde(rename = "ModeID")]
+    pub mode_id: String,
+    #[serde(rename = "ProvisioningFlow")]
+    pub provisioning_flow: String, // "Matchmaking" | "CustomGame"
+    #[serde(rename = "GamePodID")]
+    pub game_pod_id: String,
+    /// Chat room ID for "all" chat
+    #[serde(rename = "AllMUCName")]
+    pub all_muc_name: String,
+    /// Chat room ID for "team" chat
+    #[serde(rename = "TeamMUCName")]
+    pub team_muc_name: String,
+    #[serde(rename = "TeamVoiceID")]
+    pub team_voice_id: String,
+    /// JWT containing match ID, participant IDs, and match region
+    #[serde(rename = "TeamMatchToken")]
+    pub team_match_token: String,
+    #[serde(rename = "IsReconnectable")]
+    pub is_reconnectable: bool,
+    #[serde(rename = "ConnectionDetails")]
+    pub connection_details: ConnectionDetails,
+    #[serde(rename = "PostGameDetails")]
+    pub post_game_details: Option<serde_json::Value>,
+    #[serde(rename = "Players")]
+    pub players: Vec<CurrentMatchPlayer>,
+    #[serde(rename = "MatchmakingData")]
+    pub matchmaking_data: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ConnectionDetails {
+    #[serde(rename = "GameServerHosts")]
+    pub game_server_hosts: Vec<String>,
+    #[serde(rename = "GameServerHost")]
+    pub game_server_host: String,
+    #[serde(rename = "GameServerPort")]
+    pub game_server_port: i64,
+    #[serde(rename = "GameServerObfuscatedIP")]
+    pub game_server_obfuscated_ip: i64,
+    #[serde(rename = "GameClientHash")]
+    pub game_client_hash: i64,
+    #[serde(rename = "PlayerKey")]
+    pub player_key: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CurrentMatchPlayer {
+    /// Player UUID
+    #[serde(rename = "Subject")]
+    pub subject: String,
+    #[serde(rename = "TeamID")]
+    pub team_id: String, // could also be an enum for "Blue" | "Red"
+    /// Character ID
+    #[serde(rename = "CharacterID")]
+    pub character_id: String,
+    #[serde(rename = "PlayerIdentity")]
+    pub player_identity: PlayerIdentity,
+    #[serde(rename = "SeasonalBadgeInfo")]
+    pub seasonal_badge_info: SeasonalBadgeInfo,
+    #[serde(rename = "IsCoach")]
+    pub is_coach: bool,
+    #[serde(rename = "IsAssociated")]
+    pub is_associated: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PlayerIdentity {
+    /// Player UUID
+    #[serde(rename = "Subject")]
+    pub subject: String,
+    /// Card ID
+    #[serde(rename = "PlayerCardID")]
+    pub player_card_id: String,
+    /// Title ID
+    #[serde(rename = "PlayerTitleID")]
+    pub player_title_id: String,
+    #[serde(rename = "AccountLevel")]
+    pub account_level: i32,
+    /// Preferred Level Border ID
+    #[serde(rename = "PreferredLevelBorderID")]
+    pub preferred_level_border_id: String,
+    #[serde(rename = "Incognito")]
+    pub incognito: bool,
+    #[serde(rename = "HideAccountLevel")]
+    pub hide_account_level: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SeasonalBadgeInfo {
+    /// Season ID
+    #[serde(rename = "SeasonID")]
+    pub season_id: String,
+    #[serde(rename = "NumberOfWins")]
+    pub number_of_wins: i32,
+    #[serde(rename = "WinsByTier")]
+    pub wins_by_tier: Option<serde_json::Value>,
+    #[serde(rename = "Rank")]
+    pub rank: i32,
+    #[serde(rename = "LeaderboardRank")]
+    pub leaderboard_rank: i32,
+}
+
 
 use serde_json::Value;
 

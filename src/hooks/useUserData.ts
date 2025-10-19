@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { PlayerInfoResponse } from '../types';
+import { PlayerInfoResponse } from '../types/responseTypes';
 
 export const useUserData = () => {
     const [user, setUser] = useState<PlayerInfoResponse | null>(null);

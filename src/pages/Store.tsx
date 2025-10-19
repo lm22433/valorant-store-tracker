@@ -1,10 +1,10 @@
 import React, { useMemo, useEffect } from 'react';
 import useStoreData from '../hooks/useStoreData';
 import useTimer from '../hooks/useTimer';
-import LoadingScreen from './common/LoadingScreen';
-import StoreCountdown from './store/StoreCountdown';
-import StoreItems from './store/StoreItems';
-import { processStoreData } from '../store/processStoreData';
+import LoadingScreen from '../components/LoadingScreen';
+import StoreCountdown from '../components/StoreCountdown';
+import StoreItems from '../components/StoreItems';
+import { processStoreData } from '../hooks/processStoreData';
 
 interface StoreProps {
     registerRefetch: (fn: () => void) => void;

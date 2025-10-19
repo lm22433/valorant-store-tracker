@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { PlayerInfoResponse } from '../../types';
+import { PlayerInfoResponse } from '../types/responseTypes';
 
 interface Props {
   user: PlayerInfoResponse | null;

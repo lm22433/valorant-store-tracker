@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
-import { ProcessedMatchData, WIN, DRAW } from '../../history/types';
 import MatchPopup from './MatchPopup';
+import { ProcessedHistoryData, WIN, DRAW } from '../types/historyTypes';
+import { ValorantAgent, ValorantMap } from '../types/assetTypes';
+import { PlayerInfoResponse } from '../types/responseTypes';
 
 
 interface MatchProps {
-    match: ProcessedMatchData;
+    user: PlayerInfoResponse | null;
+    maps: ValorantMap[];
+    agents: ValorantAgent[];
+    match: ProcessedHistoryData;
 }
 
-const Match: React.FC<MatchProps> = ({match}) => {
+const Match: React.FC<MatchProps> = ({user, maps, agents, match}) => {
 
+    const player = match.players.find(p => p.gameName + p.tagLine === user!.acct.game_name + user!.acct.tag_line)!;
+    const playerIndex = match.players.indexOf(player);
+    const map = maps.find(m => m.url === match.mapUrl) || null;
+    const agent = agents.find(a => a.uuid === player.characterId) || null;
     const [popup, setPopup] = useState<boolean>(false);
-
-    const player = match.players[match.playerIndex];
     
     const kda = player.stats?.kills.toString() + "/" + player.stats?.deaths.toString() + "/" + player.stats?.assists.toString();
 
@@ -40,8 +47,8 @@ const Match: React.FC<MatchProps> = ({match}) => {
         >
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <img
-                    src={match.mapIconUrl}
-                    alt={`${match.mapName} map art`}
+                    src={map?.splash || undefined}
+                    alt={`${map?.displayName || 'Unknown Map'} Art`}
                     className="h-full w-full object-cover object-center opacity-40"
                 />
             </div>
@@ -52,8 +59,8 @@ const Match: React.FC<MatchProps> = ({match}) => {
                     <div className="flex items-center gap-4">
                         <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-black/40 sm:h-20 sm:w-20">
                             <img
-                                src={match.agentIconUrl}
-                                alt={`${match.agentName} portrait`}
+                                src={agent?.displayIcon || undefined}
+                                alt={`${agent?.displayName || 'Unknown Agent'} Portrait`}
                                 className="h-full w-full object-contain"
                             />
                         </div>
@@ -62,7 +69,7 @@ const Match: React.FC<MatchProps> = ({match}) => {
                                 {match.result === DRAW ? "Draw" : match.result === WIN ? "Victory" : "Defeat"}
                             </div>
                             <div className="text-lg font-semibold text-white sm:text-xl">
-                                {match.mapName}
+                                {map?.displayName || 'Unknown Map'}
                             </div>
                             <div className="text-xs uppercase tracking-[0.25em] text-white/50">
                                 {match.queueID || "Unknown"}
@@ -87,13 +94,13 @@ const Match: React.FC<MatchProps> = ({match}) => {
                 </div>
 
                 <div className="flex flex-col items-end gap-2 text-right text-xs text-white/50">
-                    <span className="font-medium uppercase tracking-[0.2em]">#{match.playerIndex + 1} in lobby</span>
+                    <span className="font-medium uppercase tracking-[0.2em]">#{playerIndex + 1} in lobby</span>
                     <span>{new Date(match.gameStartMillis).toLocaleDateString()}</span>
                 </div>
             </div>
 
             <section>
-                <MatchPopup match={match} isOpen={popup} onClose={() => setPopup(false)} />
+                <MatchPopup user={player} maps={maps} agents={agents} match={match} isOpen={popup} onClose={() => setPopup(false)} />
             </section>
         </div>
     )
