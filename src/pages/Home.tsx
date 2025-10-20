@@ -50,6 +50,7 @@ const HomeExtras: React.FC<{
                             const me = m.players.find(p => p.subject === userSub);
                             const rank = ranks?.find(r => r.tier === me?.competitiveTier) || null;
                             const rr = me?.competitiveUpdate ?? null;
+                            const rrClass = rr == null ? 'text-white/60' : rr > 0 ? 'text-emerald-400' : 'text-rose-400';
                             const rrText = rr == null ? '—' : rr > 0 ? `+${rr}` : `${rr}`;
                             const agent = agents?.find(a => a.uuid === (me?.characterId || '')) || null;
                             const k = me?.stats?.kills ?? 0;
@@ -58,7 +59,7 @@ const HomeExtras: React.FC<{
                             const acs = me?.stats?.roundsPlayed ? Math.round((me.stats.score || 0) / me.stats.roundsPlayed) : '—';
                             const date = new Date(m.gameStartMillis).toLocaleDateString();
                             const resultClass = m.result === DRAW
-                                ? 'border-white/30'
+                                ? 'border-white/30 bg-white/10'
                                 : m.result === WIN
                                     ? 'border-emerald-500/40 bg-emerald-500/10'
                                     : 'border-rose-500/40 bg-rose-500/10';
@@ -66,7 +67,7 @@ const HomeExtras: React.FC<{
                                 <div key={m.gameStartMillis} className={`h-14 grid grid-cols-7 items-center rounded-lg border px-3 py-2 text-m text-white/80 ${resultClass}`}>
                                     <div className="flex items-center gap-2 truncate">
                                         <img src={rank?.smallIcon || undefined} alt={(rank?.tierName || '' + rank?.divisionName) || 'Unranked'} className="h-9 w-9 rounded-sm object-contain" />
-                                        <span className='font-mono text-white truncate'>{rrText}</span>
+                                        <span className={`inline-block font-mono tabular-nums text-right ${rrClass} w-[4ch]`}>{rrText}</span>
                                     </div>
                                     <div className="col-span-2 flex items-center gap-2 truncate">
                                         <img src={agent?.displayIcon || undefined} alt={agent?.displayName || 'Agent'} className="h-9 w-9 rounded-sm object-contain" />
