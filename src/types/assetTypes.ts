@@ -1,3 +1,37 @@
+export interface ValorantRank {
+    tier: number;
+    tierName: string;
+    division: string;
+    divisionName: string;
+    color: string;
+    backgroundColor: string;
+    smallIcon: string;
+    largeIcon: string;
+    rankTriangleDownIcon: string;
+    rankTriangleUpIcon: string;
+}[]
+
+export interface ValorantAPIRankResponse {
+    status: number;
+    data: {
+        uuid: string;
+        assetObjectName: string;
+        tiers: {
+            tier: number;
+            tierName: string;
+            division: string;
+            divisionName: string;
+            color: string;
+            backgroundColor: string;
+            smallIcon: string;
+            largeIcon: string;
+            rankTriangleDownIcon: string;
+            rankTriangleUpIcon: string;
+        }[];
+    }[];
+    assetPath: string;
+}
+
 export interface ValorantAPIMapResponse {
   status: number;
   data: {

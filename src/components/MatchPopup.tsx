@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ProcessedHistoryData, WIN, DRAW, PlayerInfo } from '../types/historyTypes';
-import { PlayerInfoResponse } from '../types/responseTypes';
-import { ValorantAgent, ValorantMap } from '../types/assetTypes';
+import useAssets from '../hooks/useAssets';
 
 type MatchPopupProps = {
     user: PlayerInfo;
-    maps: ValorantMap[];
-    agents: ValorantAgent[];
     match: ProcessedHistoryData;
     isOpen: boolean;
     onClose: () => void;
 };
 
-const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOpen, onClose }) => {
+const MatchPopup: React.FC<MatchPopupProps> = ({ user, match, isOpen, onClose }) => {
+
+    const { maps, agents, isLoading: isAssetsLoading, error: assetsError } = useAssets();
+
+    if (isAssetsLoading) return <div>Loading...</div>;
+    if (assetsError || !maps || !agents) return <div>Error loading match data.</div>;
+
     const [visible, setVisible] = useState(false);
+
     useEffect(() => {
         if (!isOpen) return;
         const onKey = (e: KeyboardEvent) => {
@@ -35,8 +39,8 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOp
     const resultLabel = match.result === DRAW ? 'Draw' : match.result === WIN ? 'Victory' : 'Defeat';
     const resultClass = match.result === DRAW ? 'text-white' : match.result === WIN ? 'text-teal-400' : 'text-rose-400';
 
-    const map = maps.find(m => m.url === match.mapUrl) || null;
-    const userAgent = agents.find(a => a.uuid === user.characterId) || null;
+    const map = maps?.find(m => m.url === match.mapUrl) || null;
+    const userAgent = agents?.find(a => a.uuid === user.characterId) || null;
 
     // Precompute damage dealt per round by subject and damage received per round per subject
     const dealtBy: Record<string, Record<number, number>> = {};
@@ -87,18 +91,18 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOp
         const kd = d === 0 ? (k > 0 ? '∞' : '0.00') : (k / d).toFixed(2);
         const dd = computeDamageDelta(subject, stats?.roundsPlayed);
 
-        const agent = agents.find(a => a.uuid === characterId) || null;
+        const agent = agents?.find(a => a.uuid === characterId) || null;
 
         const teamClasses =
             subject == user.subject ? 
-                teamId === 'Blue' ? 'border-cyan-400/30 bg-gradient-to-r from-yellow-400/20 via-cyan-400/10 to-cyan-400/10'
-                : teamId === 'Red' ? 'border-rose-400/30 bg-gradient-to-r from-yellow-400/20 via-rose-500/10 to-rose-500/10'
+                teamId === 'Blue' ? 'border-cyan-400/30 bg-gradient-to-r from-yellow-400/30 via-cyan-400/10 to-cyan-400/10'
+                : teamId === 'Red' ? 'border-rose-400/30 bg-gradient-to-r from-yellow-400/30 via-rose-500/10 to-rose-500/10'
                 : 'border-yellow-500/50 bg-yellow-500/10'
             : teamId === 'Blue' ? 'border-cyan-400/30 bg-cyan-400/10'
             : teamId === 'Red' ? 'border-rose-400/30 bg-rose-500/10'
             : 'border-white/10 bg-white/5';
         return (
-            <div className={`grid w-full h-14 grid-cols-6 items-center rounded-lg border px-3 py-2 text-m text-white/80 ${teamClasses}`}>
+            <div className={`grid w-full h-14 grid-cols-6 items-center rounded-lg border px-3 py-2 my-2 text-m text-white/80 ${teamClasses}`}>
                 <div className="col-span-2 flex items-center gap-2 truncate">
                     <img
                         src={agent?.displayIcon || undefined}
@@ -121,14 +125,20 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOp
     return ReactDOM.createPortal(
         <div className="fixed inset-0 z-50" role="dialog" aria-modal='true'>
             <div
-                className={`absolute inset-0 bg-black/60 transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
+                className={`absolute inset-0 bg-black/80 transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
                 onClick={onClose}
             />
             <div className="absolute inset-0 flex items-center justify-center p-4">
                 <div
                     onClick={(e) => e.stopPropagation()}
-                    className={`relative w-full max-w-7xl h-fit overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-2xl backdrop-blur-lg transition-all duration-200 ${visible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'}`}
+                    className={`relative w-full max-w-7xl h-fit overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 shadow-2xl transition-all duration-200 ${visible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'}`}
                 >
+                    <div
+                            className="absolute inset-0 pointer-events-none blur-xs bg-cover bg-center opacity-[0.15]"
+                            style={{
+                                backgroundImage: `url(${map?.splash || ''})`,
+                            }}
+                        />
                     <div className="relative flex items-center justify-between border-b border-white/10 p-4 gap-3">
                         <div className="flex items-center gap-3">
                             <img
@@ -155,18 +165,6 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOp
                     </div>
 
                     <div className="relative max-h-full overflow-auto overscroll-contain p-4">
-                        <div
-                            className="absolute inset-0 pointer-events-none"
-                            style={{
-                                backgroundImage: `url(${map?.splash || ''})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                opacity: 0.15,
-                                WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0))',
-                                maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0))'
-                            }}
-                        />
-
                         <div className="relative z-10">
                             <div className="mb-3 grid grid-cols-6 gap-2 px-3 text-xs uppercase tracking-widest text-white/50">
                                 <div className="col-span-2">Player</div>
@@ -175,7 +173,7 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ user, maps, agents, match, isOp
                                 <div className="text-right">DDΔ</div>
                                 <div className="text-right">ACS</div>
                             </div>
-                            <div className="space-y-2">
+                            <div className="">
                                 {match.players.map(p => (
                                     <PlayerRow
                                         key={p.subject}

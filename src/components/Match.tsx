@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
 import MatchPopup from './MatchPopup';
 import { ProcessedHistoryData, WIN, DRAW } from '../types/historyTypes';
-import { ValorantAgent, ValorantMap } from '../types/assetTypes';
-import { PlayerInfoResponse } from '../types/responseTypes';
+import useUserData from '../hooks/useUserData';
+import useAssets from '../hooks/useAssets';
 
 
-interface MatchProps {
-    user: PlayerInfoResponse | null;
-    maps: ValorantMap[];
-    agents: ValorantAgent[];
-    match: ProcessedHistoryData;
-}
+const Match: React.FC<{match: ProcessedHistoryData}> = ({ match }) => {
 
-const Match: React.FC<MatchProps> = ({user, maps, agents, match}) => {
+    const { user, isLoading: isUserLoading, error: userError } = useUserData();
+    const { maps, agents, isLoading: isAssetsLoading, error: assetsError } = useAssets();
 
-    const player = match.players.find(p => p.gameName + p.tagLine === user!.acct.game_name + user!.acct.tag_line)!;
+    if (isUserLoading || isAssetsLoading) return <div>Loading...</div>;
+    if (userError || assetsError || !user) return <div>Error loading match data.</div>;
+
+    const player = match.players.find(p => p.subject === user.sub)!;
     const playerIndex = match.players.indexOf(player);
-    const map = maps.find(m => m.url === match.mapUrl) || null;
-    const agent = agents.find(a => a.uuid === player.characterId) || null;
+    const map = maps?.find(m => m.url === match.mapUrl) || null;
+    const agent = agents?.find(a => a.uuid === player.characterId) || null;
     const [popup, setPopup] = useState<boolean>(false);
     
     const kda = player.stats?.kills.toString() + "/" + player.stats?.deaths.toString() + "/" + player.stats?.assists.toString();
@@ -100,7 +99,7 @@ const Match: React.FC<MatchProps> = ({user, maps, agents, match}) => {
             </div>
 
             <section>
-                <MatchPopup user={player} maps={maps} agents={agents} match={match} isOpen={popup} onClose={() => setPopup(false)} />
+                <MatchPopup user={player} match={match} isOpen={popup} onClose={() => setPopup(false)} />
             </section>
         </div>
     )

@@ -55,3 +55,31 @@ pub fn name_service_url(shard: &str) -> String {
 		shard
 	)
 }
+
+#[inline]
+pub fn player_mmr_url(shard: &str, puuid: &str) -> String {
+	format!(
+		"https://pd.{}.a.pvp.net/mmr/v1/players/{}",
+		shard, puuid
+	)
+}
+
+#[inline]
+pub fn competitive_updates_url(
+	shard: &str,
+	puuid: &str,
+	start_index: &str,
+	end_index: &str,
+	queue: &str,
+) -> String {
+	if queue.is_empty() {
+		return format!(
+			"https://pd.{}.a.pvp.net/mmr/v1/players/{}/competitiveupdates?startIndex={}&endIndex={}",
+			shard, puuid, start_index, end_index
+		);
+	}
+	format!(
+		"https://pd.{}.a.pvp.net/mmr/v1/players/{}/competitiveupdates?startIndex={}&endIndex={}&queue={}",
+		shard, puuid, start_index, end_index, queue
+	)
+}

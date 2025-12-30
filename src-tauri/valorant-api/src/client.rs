@@ -1,7 +1,7 @@
-use crate::endpoints::{current_match_player_url, current_match_url, match_details_url, match_history_url, name_service_url, storefront_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
+use crate::endpoints::{current_match_player_url, current_match_url, match_details_url, match_history_url, name_service_url, storefront_url, player_mmr_url, competitive_updates_url, ENTITLEMENT_URL, PLAYER_INFO_URL, RIOT_GEO_PAS};
 use crate::errors::ValorantApiError;
 use crate::http::HttpClient;
-use crate::models::{NameInfo, NameServiceResponse, EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse, MatchDetailsResponse, CurrentMatchPlayerResponse, CurrentMatchResponse};
+use crate::models::{NameInfo, NameServiceResponse, EntitlementResponse, PlayerInfoResponse, RiotGeoBody, RiotGeoResponse, StorefrontResponse, MatchHistoryResponse, MatchDetailsResponse, CurrentMatchPlayerResponse, CurrentMatchResponse, PlayerMMRResponse, CompetitiveUpdatesResponse};
 
 pub struct ValorantApiClient<C: HttpClient> {
     http_client: C,
@@ -132,8 +132,31 @@ impl<C: HttpClient> ValorantApiClient<C> {
         Ok(body)
     }
 
-    pub async fn get_competitive_updates(&self) {
-        unimplemented!()
+    pub async fn get_competitive_updates(
+        &self,
+        shard: &str,
+        puuid: &str,
+        start_index: &str,
+        end_index: &str,
+        queue: &str,
+        client_platform: &str,
+        client_version: &str,
+        entitlement_token: &str,
+        auth_token: &str,
+    ) -> Result<CompetitiveUpdatesResponse, ValorantApiError> {
+        let url = competitive_updates_url(shard, puuid, start_index, end_index, queue);
+
+        let resp = self.http_client
+            .get(&url)
+            .bearer_auth(auth_token)
+            .header("X-Riot-ClientPlatform", client_platform)
+            .header("X-Riot-ClientVersion", client_version)
+            .header("X-Riot-Entitlements-JWT", entitlement_token)
+            .json(&serde_json::json!({}))
+            .send()
+            .await?;
+        let body = resp.json::<CompetitiveUpdatesResponse>()?;
+        Ok(body)
     }
 
     pub async fn get_leaderboard(&self) {
@@ -241,6 +264,30 @@ impl<C: HttpClient> ValorantApiClient<C> {
             .send()
             .await?;
         let body = resp.json::<Vec<NameInfo>>()?;
+        Ok(body)
+    }
+
+    pub async fn get_mmr(
+        &self,
+        shard: &str,
+        puuid: &str,
+        client_platform: &str,
+        client_version: &str,
+        entitlement_token: &str,
+        auth_token: &str,
+    ) -> Result<PlayerMMRResponse, ValorantApiError> {
+        let url = player_mmr_url(shard, puuid);
+
+        let resp = self.http_client
+            .get(&url)
+            .bearer_auth(auth_token)
+            .header("X-Riot-ClientPlatform", client_platform)
+            .header("X-Riot-ClientVersion", client_version)
+            .header("X-Riot-Entitlements-JWT", entitlement_token)
+            .json(&serde_json::json!({}))
+            .send()
+            .await?;
+        let body = resp.json::<PlayerMMRResponse>()?;
         Ok(body)
     }
 }

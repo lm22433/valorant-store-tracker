@@ -30,6 +30,8 @@ pub fn run() {
             get_history_data,
             get_match_data,
             get_current_match,
+            get_player_mmr,
+            get_competitive_updates,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

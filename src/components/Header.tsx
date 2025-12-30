@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { PlayerInfoResponse } from '../types/responseTypes';
 
 interface Props {
-  user: PlayerInfoResponse | null;
+  user: PlayerInfoResponse | undefined;
   onRefresh: () => void;
   onHome: () => void;
   onLogout: () => void;
@@ -67,7 +67,7 @@ const Header: React.FC<Props> = ({ user, onRefresh, onHome, onLogout }) => {
         <div className="fixed inset-0 z-50" role="dialog" aria-modal='true'>
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowLogoutConfirm(false)} />
           <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/10 p-5 text-white backdrop-blur-md shadow-2xl">
+            <div className="w-full max-w-md rounded-2xl border border-white/10 bg-neutral-900 p-5 text-white shadow-2xl">
               <h2 className="mb-2 text-lg font-semibold">Log out?</h2>
               <p className="mb-4 text-sm text-white/80">You will need to sign in again to access your store and match data.</p>
               <div className="flex justify-end gap-3">

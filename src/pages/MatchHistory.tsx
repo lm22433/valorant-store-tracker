@@ -1,29 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import Match from '../components/Match';
 import useHistoryData from '../hooks/useHistoryData';
 import LoadingScreen from '../components/LoadingScreen';
-import { processHistoryData } from '../hooks/processHistoryData';
-import { ValorantAgent, ValorantMap } from '../types/assetTypes';
-import { PlayerInfoResponse } from '../types/responseTypes';
 
-interface HistoryProps {
-    user: PlayerInfoResponse | null;
-    maps: ValorantMap[];
-    agents: ValorantAgent[];
-    registerRefetch: (fn: () => void) => void;
-}
-
-const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }) => {
+const History: React.FC = () => {
 
     const [queueID, setQueueID] = useState<string>("");
-    const { matches, isLoading, error, refetch } = useHistoryData(queueID);
-    
-    useEffect(() => registerRefetch(() => refetch), [registerRefetch, refetch]);
-
-    const processedMatches = useMemo(() => {
-        if (!matches || !user) return null;
-        return matches.map(match => processHistoryData(user, match));
-    }, [matches, user]);
+    const { matches, isLoading, error, refetch } = useHistoryData(queueID, 15);
 
 
     if (isLoading) return <LoadingScreen message="Loading your matches..." />;
@@ -69,12 +52,9 @@ const History: React.FC<HistoryProps> = ({ user, maps, agents, registerRefetch }
                     </div>
                 </section>
                 <section className="flex flex-col gap-6">
-                    {processedMatches && processedMatches.length > 0 ?
-                        processedMatches.map((match) => (
+                    {matches && matches.length > 0 ?
+                        matches.map((match) => (
                             <Match
-                                user={user}
-                                maps={maps}
-                                agents={agents}
                                 key={`${match.gameStartMillis}-${match.queueID}`}
                                 match={match}
                             />

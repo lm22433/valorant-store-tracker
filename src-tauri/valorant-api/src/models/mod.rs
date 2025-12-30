@@ -951,3 +951,82 @@ pub struct Kill {
     pub finishing_damage: FinishingDamage,
     pub round: i64,
 }
+
+/* ===== Player MMR ===== */
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct PlayerMMRResponse {
+    pub version: i64,
+    /// Player UUID
+    pub subject: String,
+    pub new_player_experience_finished: bool,
+    pub queue_skills: std::collections::HashMap<String, QueueSkill>,
+    pub latest_competitive_update: Option<CompetitiveUpdate>,
+    pub is_leaderboard_anonymized: bool,
+    pub is_act_rank_badge_hidden: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct QueueSkill {
+    pub total_games_needed_for_rating: i64,
+    pub total_games_needed_for_leaderboard: i64,
+    pub current_season_games_needed_for_rating: i64,
+    #[serde(rename = "SeasonalInfoBySeasonID")]
+    pub seasonal_info_by_season_id: std::collections::HashMap<String, SeasonalInfo>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct SeasonalInfo {
+    /// Season ID
+    #[serde(rename = "SeasonID")]
+    pub season_id: String,
+    pub number_of_wins: i64,
+    pub number_of_wins_with_placements: i64,
+    pub number_of_games: i64,
+    pub rank: i64,
+    pub capstone_wins: i64,
+    pub leaderboard_rank: i64,
+    pub competitive_tier: i64,
+    pub ranked_rating: i64,
+    pub wins_by_tier: Option<std::collections::HashMap<String, i64>>,
+    pub games_needed_for_rating: i64,
+    pub total_wins_needed_for_rank: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct CompetitiveUpdate {
+    /// Match ID
+    #[serde(rename = "MatchID")]
+    pub match_id: String,
+    /// Map ID
+    #[serde(rename = "MapID")]
+    pub map_id: String,
+    /// Season ID
+    #[serde(rename = "SeasonID")]
+    pub season_id: String,
+    pub match_start_time: i64,
+    pub tier_after_update: i64,
+    pub tier_before_update: i64,
+    pub ranked_rating_after_update: i64,
+    pub ranked_rating_before_update: i64,
+    pub ranked_rating_earned: i64,
+    pub ranked_rating_performance_bonus: i64,
+    pub competitive_movement: String,
+    #[serde(rename = "AFKPenalty")]
+    pub afk_penalty: i64,
+}
+
+/* ===== Competitive Updates ===== */
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct CompetitiveUpdatesResponse {
+    pub version: i64,
+    /// Player UUID
+    pub subject: String,
+    pub matches: Vec<CompetitiveUpdate>,
+}
